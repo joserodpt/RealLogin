@@ -1,0 +1,77 @@
+package pt.josegamerpt.reallogin;
+
+import me.mattstudios.mf.base.CommandManager;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import pt.josegamerpt.reallogin.config.Config;
+import pt.josegamerpt.reallogin.config.Players;
+import pt.josegamerpt.reallogin.player.PlayerListener;
+import pt.josegamerpt.reallogin.utils.Text;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+
+public final class RealLogin extends JavaPlugin {
+
+    PluginManager pm = Bukkit.getPluginManager();
+    protected static String prefixColor = "&fReal&7Login ";
+    public static HashMap<Player, String> pin = new HashMap<Player, String>();
+    public static ArrayList<Player> frozen = new ArrayList<Player>();
+    private static String version;
+
+    public static String getPrefix() {
+        return prefixColor;
+    }
+
+    public static void log(String s) {
+        Bukkit.getLogger().log(Level.INFO, s);
+    }
+
+    public static void prepPl(Player p) {
+        RealLogin.pin.put(p, "");
+        frozen.add(p);
+    }
+
+    public static String getVersion() {
+        return version;
+    }
+
+    @Override
+    public void onEnable() {
+        // Plugin startup logic
+        version = getDescription().getVersion();
+
+        //config
+        saveDefaultConfig();
+        Config.setup(this);
+        Players.setup(this);
+
+        prefixColor = Config.file().getString("Strings.Prefix");
+
+        //commands
+        CommandManager commandManager = new CommandManager(this);
+        commandManager.getMessageHandler().register("cmd.no.console", sender -> {
+            sender.sendMessage(Text.color(prefixColor + "&f| &cThis command can't be used in the console!"));
+        });
+        commandManager.getMessageHandler().register("cmd.no.exists", sender -> {
+            sender.sendMessage(Text.color(prefixColor + "&f| &cThe command you're trying to use doesn't exist!"));
+        });
+        commandManager.getMessageHandler().register("cmd.no.permission", sender -> {
+            sender.sendMessage(Text.color(prefixColor + "&f| &cYou don't have permission to execute this command!"));
+        });
+        commandManager.getMessageHandler().register("cmd.wrong.usage", sender -> {
+            sender.sendMessage(Text.color(prefixColor + "&f| &c&cWrong usage for the command!"));
+        });
+        commandManager.register(new Command());
+        pm.registerEvents(new PlayerListener(), this);
+    }
+
+    @Override
+    public void onDisable() {
+        // Plugin shutdown logic
+    }
+}

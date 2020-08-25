@@ -1,0 +1,23 @@
+Strings:
+  Prefix: "&fReal&7Login "
+  GUI:
+    PIN: "&bPIN: &8&l"
+    Login: "&8&lLogin"
+    Register: "&c&lRegister"
+    Items:
+      Leave-Server:
+        Name: "&cLeave"
+        Description: "&7Click here to leave the server."
+      Remove-Number:
+        Name: "&aRemove Last Digit"
+        Description: "&7Click here to erase the last digit."
+      Confirm-Pin:
+        Name: "&aConfirm"
+        Description: "&7Click here to confirm your PIN. Right click to remove last digit."
+  Titles:
+    Registered:
+      Up: "&9&lRegistered!"
+      Down: "&bRemember your PIN, you will need it to log back in."
+    Login:
+      Up: "&a&lLogged in!"
+      Down: "&2Welcome back to the server."
