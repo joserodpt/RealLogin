@@ -46,15 +46,14 @@ public class PlayerManager {
             GuiItem i9 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 9, "&6&l9"), event -> digitPin(p, 9, gui));
             gui.setItem(3, 6, i9);
 
-            GuiItem removeLetter = new GuiItem(Itens.createItem(Material.BARRIER, 1, Config.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))), event -> removeNumber(p,  gui));
+            GuiItem removeLetter = new GuiItem(Itens.createItem(Material.BARRIER, 1, Config.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))), event -> removeNumber(p, gui));
             gui.setItem(2, 8, removeLetter);
 
             gui.open(p);
             gui.setDefaultClickAction(event -> event.setCancelled(true));
             gui.setCloseGuiAction(event -> openPin(p, 1));
 
-            switch (i)
-            {
+            switch (i) {
                 case 0:
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
                     break;
@@ -83,14 +82,16 @@ public class PlayerManager {
     }
 
     private static void checkPin(Player p, Gui g) {
-        if (RealLogin.pin.get(p).equalsIgnoreCase(Players.file().getString(p.getName())))
-        {
+        if (RealLogin.pin.get(p).equalsIgnoreCase(Players.file().getString(p.getName()))) {
             g.setCloseGuiAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
             g.close(p);
             p.setInvulnerable(false);
             RealLogin.frozen.remove(p);
 
-            p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Login.Up")), Text.color(Config.file().getString("Strings.Titles.Login.Down")),7, 50, 10);
+            p.getInventory().setContents(RealLogin.inv.get(p));
+            RealLogin.inv.remove(p);
+            RealLogin.pin.remove(p);
+            p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Login.Up")), Text.color(Config.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
         }
     }
 
@@ -132,8 +133,7 @@ public class PlayerManager {
             gui.setDefaultClickAction(event -> event.setCancelled(true));
             gui.setCloseGuiAction(event -> openRegister(p, 1));
 
-            switch (i)
-            {
+            switch (i) {
                 case 0:
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
                     break;
@@ -156,6 +156,9 @@ public class PlayerManager {
             p.setInvulnerable(false);
 
             RealLogin.frozen.remove(p);
+            p.getInventory().setContents(RealLogin.inv.get(p));
+            RealLogin.inv.remove(p);
+            RealLogin.pin.remove(p);
 
             p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Registered.Up")), Text.color(Config.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
 

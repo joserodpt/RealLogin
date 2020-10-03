@@ -1,12 +1,14 @@
 package pt.josegamerpt.reallogin;
 
-import me.mattstudios.mf.annotations.*;
+import me.mattstudios.mf.annotations.Default;
+import me.mattstudios.mf.annotations.Permission;
+import me.mattstudios.mf.annotations.SubCommand;
+import me.mattstudios.mf.annotations.WrongUsage;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.josegamerpt.reallogin.config.Config;
 import pt.josegamerpt.reallogin.config.Players;
-import pt.josegamerpt.reallogin.player.PlayerListener;
 import pt.josegamerpt.reallogin.player.PlayerManager;
 import pt.josegamerpt.reallogin.utils.Text;
 
@@ -30,7 +32,7 @@ public class Command extends CommandBase {
     @SubCommand("resetPin")
     @Permission("reallogin.resetpin")
     public void resetPinCommand(CommandSender commandSender) {
-        Players.file().set(((Player) commandSender).getName(), null);
+        Players.file().set(commandSender.getName(), null);
         PlayerManager.openRegister(((Player) commandSender), 0);
 
     }
