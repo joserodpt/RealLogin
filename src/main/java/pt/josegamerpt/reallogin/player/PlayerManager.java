@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.ClickType;
 import pt.josegamerpt.reallogin.RealLogin;
 import pt.josegamerpt.reallogin.config.Config;
 import pt.josegamerpt.reallogin.config.Players;
-import pt.josegamerpt.reallogin.utils.Itens;
+import pt.josegamerpt.reallogin.utils.ItemBuilder;
 import pt.josegamerpt.reallogin.utils.Text;
 
 import java.util.Arrays;
@@ -24,29 +24,29 @@ public class PlayerManager {
             p.setInvulnerable(true);
 
             //leaveServer
-            GuiItem g = new GuiItem(Itens.createItem(Material.OAK_DOOR, 1, Config.file().getString("Strings.GUI.Items.Leave-Server.Name"), Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + "\n&cSais-te do servidor.")));
+            GuiItem g = new GuiItem(new ItemBuilder(Material.OAK_DOOR).setDisplayName(Config.file().getString("Strings.GUI.Items.Leave-Server.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))).get(), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + "\n&cSais-te do servidor.")));
             gui.setItem(2, 2, g);
 
-            GuiItem i1 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&6&l1"), event -> digitPin(p, 1, gui));
+            GuiItem i1 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 1, gui));
             gui.setItem(1, 4, i1);
-            GuiItem i2 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 2, "&6&l2"), event -> digitPin(p, 2, gui));
+            GuiItem i2 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 2, gui));
             gui.setItem(1, 5, i2);
-            GuiItem i3 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 3, "&6&l3"), event -> digitPin(p, 3, gui));
+            GuiItem i3 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 3, gui));
             gui.setItem(1, 6, i3);
-            GuiItem i4 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 4, "&6&l4"), event -> digitPin(p, 4, gui));
+            GuiItem i4 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 4, gui));
             gui.setItem(2, 4, i4);
-            GuiItem i5 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 5, "&6&l5"), event -> digitPin(p, 5, gui));
+            GuiItem i5 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 5, gui));
             gui.setItem(2, 5, i5);
-            GuiItem i6 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 6, "&6&l6"), event -> digitPin(p, 6, gui));
+            GuiItem i6 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 6, gui));
             gui.setItem(2, 6, i6);
-            GuiItem i7 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 7, "&6&l7"), event -> digitPin(p, 7, gui));
+            GuiItem i7 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 7, gui));
             gui.setItem(3, 4, i7);
-            GuiItem i8 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 8, "&6&l8"), event -> digitPin(p, 8, gui));
+            GuiItem i8 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 8, gui));
             gui.setItem(3, 5, i8);
-            GuiItem i9 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 9, "&6&l9"), event -> digitPin(p, 9, gui));
+            GuiItem i9 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 9, gui));
             gui.setItem(3, 6, i9);
 
-            GuiItem removeLetter = new GuiItem(Itens.createItem(Material.BARRIER, 1, Config.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))), event -> removeNumber(p, gui));
+            GuiItem removeLetter = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName(Config.file().getString("Strings.GUI.Items.Remove-Number.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))).get(), event -> removeNumber(p, gui));
             gui.setItem(2, 8, removeLetter);
 
             gui.open(p);
@@ -104,29 +104,29 @@ public class PlayerManager {
             RealLogin.pin.put(p, "");
 
             //leaveServer
-            GuiItem g = new GuiItem(Itens.createItem(Material.OAK_DOOR, 1, Config.file().getString("Strings.GUI.Items.Leave-Server.Name"), Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + "\n&cSais-te do servidor.")));
+            GuiItem g = new GuiItem(new ItemBuilder(Material.OAK_DOOR).setDisplayName(Config.file().getString("Strings.GUI.Items.Leave-Server.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))).get(), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + "\n&cSais-te do servidor.")));
             gui.setItem(2, 2, g);
 
-            GuiItem i1 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&6&l1"), event -> digitPin(p, 1, gui));
+            GuiItem i1 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 1, gui));
             gui.setItem(1, 4, i1);
-            GuiItem i2 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 2, "&6&l2"), event -> digitPin(p, 2, gui));
+            GuiItem i2 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 2, gui));
             gui.setItem(1, 5, i2);
-            GuiItem i3 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 3, "&6&l3"), event -> digitPin(p, 3, gui));
+            GuiItem i3 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 3, gui));
             gui.setItem(1, 6, i3);
-            GuiItem i4 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 4, "&6&l4"), event -> digitPin(p, 4, gui));
+            GuiItem i4 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 4, gui));
             gui.setItem(2, 4, i4);
-            GuiItem i5 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 5, "&6&l5"), event -> digitPin(p, 5, gui));
+            GuiItem i5 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 5, gui));
             gui.setItem(2, 5, i5);
-            GuiItem i6 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 6, "&6&l6"), event -> digitPin(p, 6, gui));
+            GuiItem i6 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 6, gui));
             gui.setItem(2, 6, i6);
-            GuiItem i7 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 7, "&6&l7"), event -> digitPin(p, 7, gui));
+            GuiItem i7 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 7, gui));
             gui.setItem(3, 4, i7);
-            GuiItem i8 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 8, "&6&l8"), event -> digitPin(p, 8, gui));
+            GuiItem i8 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 8, gui));
             gui.setItem(3, 5, i8);
-            GuiItem i9 = new GuiItem(Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 9, "&6&l9"), event -> digitPin(p, 9, gui));
+            GuiItem i9 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 9, gui));
             gui.setItem(3, 6, i9);
 
-            GuiItem removeLetter = new GuiItem(Itens.createItem(Material.EMERALD, 1, Config.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), Arrays.asList(Config.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))), event -> confirmar(event.getClick(), p, RealLogin.pin.get(p), gui));
+            GuiItem removeLetter = new GuiItem(new ItemBuilder(Material.EMERALD).setDisplayName(Config.file().getString("Strings.GUI.Items.Confirm-Pin.Name")).setLore(Arrays.asList(Config.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))).get(), event -> confirmar(event.getClick(), p, RealLogin.pin.get(p), gui));
             gui.setItem(2, 8, removeLetter);
 
             gui.open(p);
