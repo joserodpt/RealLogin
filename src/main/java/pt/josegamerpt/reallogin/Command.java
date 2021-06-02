@@ -48,4 +48,30 @@ public class Command extends CommandBase {
                 "&fReal&7Login &aReloaded.",
                 "&6"));
     }
+
+    @SubCommand("adminreset")
+    @Permission("reallogin.adminreset")
+    public void adminreset(CommandSender commandSender, final String name) {
+        if (Players.file().get(name) != null) {
+            Players.file().set(name, null);
+            Players.save();
+            Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+                    "&fPlayer pin &adeleted.",
+                    "&6"));
+        } else {
+            Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+                    "&fPlayer &cnot found.",
+                    "&6"));
+        }
+    }
+
+    @SubCommand("setpin")
+    @Permission("reallogin.setpin")
+    public void setpin(CommandSender commandSender, final String name, final Integer pin) {
+        Players.file().set(name, pin);
+        Players.save();
+        Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+                "&fPlayer " + name + " &fpin set to &a" + pin,
+                "&6"));
+    }
 }
