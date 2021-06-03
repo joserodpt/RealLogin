@@ -5,6 +5,7 @@ import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.annotations.WrongUsage;
 import me.mattstudios.mf.base.CommandBase;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.josegamerpt.reallogin.config.Config;
@@ -33,7 +34,7 @@ public class Command extends CommandBase {
     @Permission("reallogin.resetpin")
     public void resetPinCommand(CommandSender commandSender) {
         Players.file().set(commandSender.getName(), null);
-        PlayerManager.openRegister(((Player) commandSender), 0);
+        PlayerManager.openRegister(((Player) commandSender), Sound.ENTITY_VILLAGER_YES);
 
     }
 
@@ -68,6 +69,10 @@ public class Command extends CommandBase {
     @SubCommand("setpin")
     @Permission("reallogin.setpin")
     public void setpin(CommandSender commandSender, final String name, final Integer pin) {
+        if (pin == null) {
+            commandSender.sendMessage(Text.centeredString("&cInvalid input."));
+            return;
+        }
         Players.file().set(name, pin);
         Players.save();
         Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",

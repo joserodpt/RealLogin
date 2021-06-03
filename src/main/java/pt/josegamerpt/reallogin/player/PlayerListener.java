@@ -1,10 +1,10 @@
 package pt.josegamerpt.reallogin.player;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -29,7 +29,7 @@ public class PlayerListener implements Listener {
         if (Players.file().get(p.getName()) != null) {
             PlayerManager.openPin(p, 0);
         } else {
-            PlayerManager.openRegister(p, 0);
+            PlayerManager.openRegister(p, Sound.ENTITY_VILLAGER_YES);
         }
     }
 

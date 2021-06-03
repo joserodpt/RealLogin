@@ -1,5 +1,6 @@
 Strings:
   Prefix: "&fReal&7Login "
+  Kick-Message: "&7You left the server."
   GUI:
     PIN: "&bPIN: &8&l"
     Login: "&8&lLogin"

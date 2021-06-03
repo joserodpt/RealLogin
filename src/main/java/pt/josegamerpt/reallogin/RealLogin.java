@@ -13,7 +13,6 @@ import pt.josegamerpt.reallogin.utils.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public final class RealLogin extends JavaPlugin {
 
@@ -26,10 +25,6 @@ public final class RealLogin extends JavaPlugin {
 
     public static String getPrefix() {
         return prefixColor;
-    }
-
-    public static void log(String s) {
-        Bukkit.getLogger().log(Level.INFO, s);
     }
 
     public static void prepPl(Player p) {
