@@ -1,6 +1,7 @@
 package pt.josegamerpt.reallogin.utils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class Text {
     }
 
     public static void sendListCenteres(Player p, List<String> l) {
+        color(l).forEach(s -> p.sendMessage(centeredString(s)));
+    }
+
+    public static void sendListCenteres(CommandSender p, List<String> l) {
         color(l).forEach(s -> p.sendMessage(centeredString(s)));
     }
 

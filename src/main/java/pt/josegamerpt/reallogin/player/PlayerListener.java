@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import pt.josegamerpt.reallogin.RealLogin;
+import pt.josegamerpt.reallogin.config.Config;
 import pt.josegamerpt.reallogin.config.Players;
 
 public class PlayerListener implements Listener {
@@ -20,8 +21,10 @@ public class PlayerListener implements Listener {
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
             openGUI(e.getPlayer());
-            RealLogin.inv.put(e.getPlayer(), e.getPlayer().getInventory().getContents());
-            e.getPlayer().getInventory().clear();
+            if (Config.file().getBoolean("Hide-Inventories")) {
+                RealLogin.inv.put(e.getPlayer(), e.getPlayer().getInventory().getContents());
+                e.getPlayer().getInventory().clear();
+            }
         }, 10L);
     }
 

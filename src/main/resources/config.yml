@@ -1,3 +1,5 @@
+Max-Pin-Length: 4
+Hide-Inventories: false
 Strings:
   Prefix: "&fReal&7Login "
   Kick-Message: "&7You left the server."

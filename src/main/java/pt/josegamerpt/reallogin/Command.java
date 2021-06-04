@@ -50,17 +50,17 @@ public class Command extends CommandBase {
                 "&6"));
     }
 
-    @SubCommand("adminreset")
-    @Permission("reallogin.adminreset")
+    @SubCommand("deletepin")
+    @Permission("reallogin.deletepin")
     public void adminreset(CommandSender commandSender, final String name) {
         if (Players.file().get(name) != null) {
             Players.file().set(name, null);
             Players.save();
-            Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+            Text.sendListCenteres(commandSender, Arrays.asList("&6",
                     "&fPlayer pin &adeleted.",
                     "&6"));
         } else {
-            Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+            Text.sendListCenteres(commandSender, Arrays.asList("&6",
                     "&fPlayer &cnot found.",
                     "&6"));
         }
@@ -73,9 +73,9 @@ public class Command extends CommandBase {
             commandSender.sendMessage(Text.centeredString("&cInvalid input."));
             return;
         }
-        Players.file().set(name, pin);
+        Players.file().set(name, pin + "");
         Players.save();
-        Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
+        Text.sendListCenteres(commandSender, Arrays.asList("&6",
                 "&fPlayer " + name + " &fpin set to &a" + pin,
                 "&6"));
     }

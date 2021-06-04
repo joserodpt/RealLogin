@@ -13,7 +13,6 @@ import pt.josegamerpt.reallogin.config.Players;
 import pt.josegamerpt.reallogin.utils.ItemBuilder;
 import pt.josegamerpt.reallogin.utils.Text;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class PlayerManager {
@@ -74,11 +73,12 @@ public class PlayerManager {
     }
 
     public static void digitPin(Player p, int i, Gui g) {
-        RealLogin.pin.put(p, RealLogin.pin.get(p) + i);
-        p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 50);
-        g.updateTitle(Text.color("&bPIN: &8&l" + RealLogin.pin.get(p)));
-
-        checkPin(p, g);
+        if (RealLogin.pin.get(p).length() < Config.file().getInt("Max-Pin-Length"))  {
+            RealLogin.pin.put(p, RealLogin.pin.get(p) + i);
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 50);
+            g.updateTitle(Text.color("&bPIN: &8&l" + RealLogin.pin.get(p)));
+            checkPin(p, g);
+        }
     }
 
     private static void checkPin(Player p, Gui g) {
@@ -88,8 +88,10 @@ public class PlayerManager {
             p.setInvulnerable(false);
             RealLogin.frozen.remove(p);
 
-            p.getInventory().setContents(RealLogin.inv.get(p));
-            RealLogin.inv.remove(p);
+            if (Config.file().getBoolean("Hide-Inventories")) {
+                p.getInventory().setContents(RealLogin.inv.get(p));
+                RealLogin.inv.remove(p);
+            }
             RealLogin.pin.remove(p);
             p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Login.Up")), Text.color(Config.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
         }
@@ -141,22 +143,23 @@ public class PlayerManager {
         if (e == ClickType.RIGHT) {
             removeNumber(p, g);
         } else {
-            Players.file().set(p.getName(), s);
-            Players.save();
+            if (s.length() > 1) {
+                Players.file().set(p.getName(), s);
+                Players.save();
 
-            g.setCloseGuiAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
-            g.close(p);
-            p.setInvulnerable(false);
+                g.setCloseGuiAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
+                g.close(p);
+                p.setInvulnerable(false);
 
-            RealLogin.frozen.remove(p);
-            if (RealLogin.inv.containsKey(p)) {
-                p.getInventory().setContents(RealLogin.inv.get(p));
+                RealLogin.frozen.remove(p);
+                if (RealLogin.inv.containsKey(p)) {
+                    p.getInventory().setContents(RealLogin.inv.get(p));
+                    RealLogin.inv.remove(p);
+                }
+                RealLogin.pin.remove(p);
+
+                p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Registered.Up")), Text.color(Config.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
             }
-            RealLogin.inv.remove(p);
-            RealLogin.pin.remove(p);
-
-            p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Registered.Up")), Text.color(Config.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
-
         }
     }
 }
