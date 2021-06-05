@@ -19,7 +19,6 @@ import java.util.Arrays;
 public class Command extends CommandBase {
     @Default
     @Permission("reallogin.command")
-    @WrongUsage("&c/reallogin <arguments>")
     public void defaultCommand(CommandSender commandSender) {
         Text.sendListCenteres((Player) commandSender, Arrays.asList("&6",
                 "&fReal&7Login &a" + RealLogin.getVersion(),
