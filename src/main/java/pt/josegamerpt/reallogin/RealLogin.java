@@ -19,7 +19,7 @@ public final class RealLogin extends JavaPlugin {
     public static HashMap<Player, String> pin = new HashMap<>();
     public static HashMap<Player, ItemStack[]> inv = new HashMap<>();
     public static ArrayList<Player> frozen = new ArrayList<>();
-    protected static String prefixColor = "&fReal&7Login ";
+    private static String prefixColor = "&fReal&7Login ";
     private static String version;
     PluginManager pm = Bukkit.getPluginManager();
 
@@ -56,6 +56,8 @@ public final class RealLogin extends JavaPlugin {
         commandManager.getMessageHandler().register("cmd.wrong.usage", sender -> sender.sendMessage(Text.color(prefixColor + "&f| &c&cWrong usage for the command!")));
         commandManager.register(new Command());
         pm.registerEvents(new PlayerListener(), this);
+
+        new Metrics(this, 12577);
     }
 
     @Override
