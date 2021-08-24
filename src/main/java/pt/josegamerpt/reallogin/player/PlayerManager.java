@@ -1,7 +1,8 @@
 package pt.josegamerpt.reallogin.player;
 
-import me.mattstudios.mfgui.gui.guis.Gui;
-import me.mattstudios.mfgui.gui.guis.GuiItem;
+import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,7 +20,7 @@ public class PlayerManager {
 
     public static void openPin(Player p, int i) {
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
-            Gui gui = new Gui(3, Text.color(Config.file().getString("Strings.GUI.Login")));
+            Gui gui = Gui.gui().rows(3).title(Component.text(Text.color(Config.file().getString("Strings.GUI.Login")))).create();
             p.setInvulnerable(true);
 
             //leaveServer
@@ -100,8 +101,8 @@ public class PlayerManager {
 
     public static void openRegister(Player p, Sound s) {
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
+            Gui gui = Gui.gui().rows(3).title(Component.text(Text.color(Config.file().getString("Strings.GUI.Register")))).create();
 
-            Gui gui = new Gui(3, Text.color(Config.file().getString("Strings.GUI.Register")));
             p.setInvulnerable(true);
             RealLogin.pin.put(p, "");
 

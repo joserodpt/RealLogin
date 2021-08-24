@@ -5,10 +5,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.*;
 import pt.josegamerpt.reallogin.RealLogin;
 import pt.josegamerpt.reallogin.config.Config;
 import pt.josegamerpt.reallogin.config.Players;
@@ -52,6 +49,22 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e) {
+        if (RealLogin.frozen.contains(e.getPlayer())) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent e)
+    {
+        if (RealLogin.frozen.contains(e.getPlayer())) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent e)
+    {
         if (RealLogin.frozen.contains(e.getPlayer())) {
             e.setCancelled(true);
         }

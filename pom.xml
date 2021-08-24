@@ -45,7 +45,7 @@
                                     <shadedPattern>pt.josegamerpt.reallogin</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>me.mattstudios.mfgui</pattern>
+                                    <pattern>dev.triumphteam.gui</pattern>
                                     <shadedPattern>pt.josegamerpt.reallogin</shadedPattern>
                                 </relocation>
                             </relocations>
@@ -72,6 +72,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>repo</id>
+            <url>https://repo.mattstudios.me/artifactory/public/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,13 +87,13 @@
         </dependency>
         <dependency>
             <groupId>me.mattstudios.utils</groupId>
-            <artifactId>matt-framework-gui</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>me.mattstudios.utils</groupId>
             <artifactId>matt-framework</artifactId>
             <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.triumphteam</groupId>
+            <artifactId>triumph-gui</artifactId>
+            <version>3.0.3</version> <!-- replace version here -->
         </dependency>
     </dependencies>
 </project>
