@@ -76,6 +76,10 @@
             <id>repo</id>
             <url>https://repo.mattstudios.me/artifactory/public/</url>
         </repository>
+        <repository>
+            <id>skullcreator-repo</id>
+            <url>https://github.com/deanveloper/SkullCreator/raw/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -93,7 +97,13 @@
         <dependency>
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
-            <version>3.0.3</version> <!-- replace version here -->
+            <version>3.1.2</version> <!-- replace version here -->
+        </dependency>
+        <dependency>
+            <groupId>dev.dbassett</groupId>
+            <artifactId>skullcreator</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

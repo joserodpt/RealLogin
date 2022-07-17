@@ -1,9 +1,6 @@
 package pt.josegamerpt.reallogin;
 
-import me.mattstudios.mf.annotations.Default;
-import me.mattstudios.mf.annotations.Permission;
-import me.mattstudios.mf.annotations.SubCommand;
-import me.mattstudios.mf.annotations.WrongUsage;
+import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -32,9 +29,8 @@ public class Command extends CommandBase {
     @SubCommand("resetPin")
     @Permission("reallogin.resetpin")
     public void resetPinCommand(CommandSender commandSender) {
-        Players.file().set(commandSender.getName(), null);
-        PlayerManager.openRegister(((Player) commandSender), Sound.ENTITY_VILLAGER_YES);
-
+            Players.file().set(commandSender.getName(), null);
+            PlayerManager.openRegister(((Player) commandSender), Sound.ENTITY_VILLAGER_YES);
     }
 
     @SubCommand("reload")

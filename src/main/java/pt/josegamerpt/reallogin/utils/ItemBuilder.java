@@ -14,6 +14,10 @@ public class ItemBuilder {
         stack = new ItemStack(mat, 1);
     }
 
+    public ItemBuilder(ItemStack i) {
+        stack = i;
+    }
+
     public ItemMeta getItemMeta() {
         return stack.getItemMeta();
     }

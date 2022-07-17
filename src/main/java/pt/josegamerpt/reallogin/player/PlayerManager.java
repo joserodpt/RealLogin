@@ -1,5 +1,6 @@
 package pt.josegamerpt.reallogin.player;
 
+import dev.dbassett.skullcreator.SkullCreator;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
@@ -27,6 +28,47 @@ public class PlayerManager {
             GuiItem g = new GuiItem(new ItemBuilder(Material.OAK_DOOR).setDisplayName(Config.file().getString("Strings.GUI.Items.Leave-Server.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))).get(), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + Config.file().getString("Strings.Kick-Message"))));
             gui.setItem(2, 2, g);
 
+            pinItems(gui, p);
+
+            GuiItem removeLetter = new GuiItem(new ItemBuilder(Material.LAVA_BUCKET).setDisplayName(Config.file().getString("Strings.GUI.Items.Remove-Number.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))).get(), event -> removeNumber(p, gui));
+            gui.setItem(2, 8, removeLetter);
+
+            gui.open(p);
+            gui.setDefaultClickAction(event -> event.setCancelled(true));
+            gui.setCloseGuiAction(event -> openPin(p, 1));
+
+            switch (i) {
+                case 0:
+                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
+                    break;
+                case 1:
+                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 20);
+                    break;
+            }
+        }, 5L);
+    }
+
+    private static void pinItems(Gui gui, Player p) {
+        if (Config.file().getBoolean("Use-Custom-Heads")) {
+            GuiItem i1 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzFiYzJiY2ZiMmJkMzc1OWU2YjFlODZmYzdhNzk1ODVlMTEyN2RkMzU3ZmMyMDI4OTNmOWRlMjQxYmM5ZTUzMCJ9fX0=")).setDisplayName("&6&l1").get(), event -> digitPin(p, 1, gui));
+            gui.setItem(1, 4, i1);
+            GuiItem i2 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGNkOWVlZWU4ODM0Njg4ODFkODM4NDhhNDZiZjMwMTI0ODVjMjNmNzU3NTNiOGZiZTg0ODczNDE0MTk4NDcifX19")).setDisplayName("&6&l2").get(), event -> digitPin(p, 2, gui));
+            gui.setItem(1, 5, i2);
+            GuiItem i3 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWQ0ZWFlMTM5MzM4NjBhNmRmNWU4ZTk1NTY5M2I5NWE4YzNiMTVjMzZiOGI1ODc1MzJhYzA5OTZiYzM3ZTUifX19")).setDisplayName("&6&l3").get(), event -> digitPin(p, 3, gui));
+            gui.setItem(1, 6, i3);
+            GuiItem i4 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDJlNzhmYjIyNDI0MjMyZGMyN2I4MWZiY2I0N2ZkMjRjMWFjZjc2MDk4NzUzZjJkOWMyODU5ODI4N2RiNSJ9fX0=")).setDisplayName("&6&l4").get(), event -> digitPin(p, 4, gui));
+            gui.setItem(2, 4, i4);
+            GuiItem i5 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQ1N2UzYmM4OGE2NTczMGUzMWExNGUzZjQxZTAzOGE1ZWNmMDg5MWE2YzI0MzY0M2I4ZTU0NzZhZTIifX19")).setDisplayName("&6&l5").get(), event -> digitPin(p, 5, gui));
+            gui.setItem(2, 5, i5);
+            GuiItem i6 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzM0YjM2ZGU3ZDY3OWI4YmJjNzI1NDk5YWRhZWYyNGRjNTE4ZjVhZTIzZTcxNjk4MWUxZGNjNmIyNzIwYWIifX19")).setDisplayName("&6&l6").get(), event -> digitPin(p, 6, gui));
+            gui.setItem(2, 6, i6);
+            GuiItem i7 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmRiNmViMjVkMWZhYWJlMzBjZjQ0NGRjNjMzYjU4MzI0NzVlMzgwOTZiN2UyNDAyYTNlYzQ3NmRkN2I5In19fQ==")).setDisplayName("&6&l7").get(), event -> digitPin(p, 7, gui));
+            gui.setItem(3, 4, i7);
+            GuiItem i8 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTkxOTQ5NzNhM2YxN2JkYTk5NzhlZDYyNzMzODM5OTcyMjI3NzRiNDU0Mzg2YzgzMTljMDRmMWY0Zjc0YzJiNSJ9fX0=")).setDisplayName("&6&l8").get(), event -> digitPin(p, 8, gui));
+            gui.setItem(3, 5, i8);
+            GuiItem i9 = new GuiItem(new ItemBuilder(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTY3Y2FmNzU5MWIzOGUxMjVhODAxN2Q1OGNmYzY0MzNiZmFmODRjZDQ5OWQ3OTRmNDFkMTBiZmYyZTViODQwIn19fQ==")).setDisplayName("&6&l9").get(), event -> digitPin(p, 9, gui));
+            gui.setItem(3, 6, i9);
+        } else {
             GuiItem i1 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 1, gui));
             gui.setItem(1, 4, i1);
             GuiItem i2 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l2").setAmount(2).get(), event -> digitPin(p, 2, gui));
@@ -45,23 +87,7 @@ public class PlayerManager {
             gui.setItem(3, 5, i8);
             GuiItem i9 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l9").setAmount(9).get(), event -> digitPin(p, 9, gui));
             gui.setItem(3, 6, i9);
-
-            GuiItem removeLetter = new GuiItem(new ItemBuilder(Material.LAVA_BUCKET).setDisplayName(Config.file().getString("Strings.GUI.Items.Remove-Number.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Remove-Number.Description"))).get(), event -> removeNumber(p, gui));
-            gui.setItem(2, 8, removeLetter);
-
-            gui.open(p);
-            gui.setDefaultClickAction(event -> event.setCancelled(true));
-            gui.setCloseGuiAction(event -> openPin(p, 1));
-
-            switch (i) {
-                case 0:
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
-                    break;
-                case 1:
-                    p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 20);
-                    break;
-            }
-        }, 5L);
+        }
     }
 
     private static void removeNumber(Player p, Gui g) {
@@ -110,24 +136,7 @@ public class PlayerManager {
             GuiItem g = new GuiItem(new ItemBuilder(Material.OAK_DOOR).setDisplayName(Config.file().getString("Strings.GUI.Items.Leave-Server.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Leave-Server.Description"))).get(), event -> p.kickPlayer(Text.color(RealLogin.getPrefix() + Config.file().getString("Strings.Kick-Message"))));
             gui.setItem(2, 2, g);
 
-            GuiItem i1 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l1").get(), event -> digitPin(p, 1, gui));
-            gui.setItem(1, 4, i1);
-            GuiItem i2 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l2").setAmount(2).get(), event -> digitPin(p, 2, gui));
-            gui.setItem(1, 5, i2);
-            GuiItem i3 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l3").setAmount(3).get(), event -> digitPin(p, 3, gui));
-            gui.setItem(1, 6, i3);
-            GuiItem i4 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l4").setAmount(4).get(), event -> digitPin(p, 4, gui));
-            gui.setItem(2, 4, i4);
-            GuiItem i5 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l5").setAmount(5).get(), event -> digitPin(p, 5, gui));
-            gui.setItem(2, 5, i5);
-            GuiItem i6 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l6").setAmount(6).get(), event -> digitPin(p, 6, gui));
-            gui.setItem(2, 6, i6);
-            GuiItem i7 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l7").setAmount(7).get(), event -> digitPin(p, 7, gui));
-            gui.setItem(3, 4, i7);
-            GuiItem i8 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l8").setAmount(8).get(), event -> digitPin(p, 8, gui));
-            gui.setItem(3, 5, i8);
-            GuiItem i9 = new GuiItem(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).setDisplayName("&6&l9").setAmount(9).get(), event -> digitPin(p, 9, gui));
-            gui.setItem(3, 6, i9);
+            pinItems(gui, p);
 
             GuiItem removeLetter = new GuiItem(new ItemBuilder(Material.EMERALD).setDisplayName(Config.file().getString("Strings.GUI.Items.Confirm-Pin.Name")).setLore(Collections.singletonList(Config.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))).get(), event -> confirmar(event.getClick(), p, RealLogin.pin.get(p), gui));
             gui.setItem(2, 8, removeLetter);
