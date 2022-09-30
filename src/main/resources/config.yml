@@ -1,6 +1,9 @@
 Max-Pin-Length: 4
 Hide-Inventories: false
 Use-Custom-Heads: true
+BungeeCord:
+  Connect-Lobby: false
+  Lobby-Server: "lobby"
 Strings:
   Prefix: "&fReal&7Login "
   Kick-Message: "&7You left the server."
@@ -25,3 +28,6 @@ Strings:
     Login:
       Up: "&a&lLogged in!"
       Down: "&2Welcome back to the server."
+    Sending:
+      Up: "&6&lConnecting...."
+      Down: "&eto lobby server."

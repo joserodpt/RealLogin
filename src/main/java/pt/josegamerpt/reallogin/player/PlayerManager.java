@@ -13,6 +13,7 @@ import pt.josegamerpt.reallogin.RealLogin;
 import pt.josegamerpt.reallogin.config.Config;
 import pt.josegamerpt.reallogin.config.Players;
 import pt.josegamerpt.reallogin.utils.ItemBuilder;
+import pt.josegamerpt.reallogin.utils.Messaging;
 import pt.josegamerpt.reallogin.utils.Text;
 
 import java.util.Collections;
@@ -121,6 +122,14 @@ public class PlayerManager {
             }
             RealLogin.pin.remove(p);
             p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Login.Up")), Text.color(Config.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
+            if (Config.file().getBoolean("BungeeCord.Connect-Lobby")) {
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
+                    p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Sending.Up")), Text.color(Config.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10);
+                }, 5L);
+                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
+                    Messaging.connect(p, Config.file().getString("BungeeCord.Lobby-Server"));
+                }, 10L);
+            }
         }
     }
 
@@ -169,6 +178,14 @@ public class PlayerManager {
                 RealLogin.pin.remove(p);
 
                 p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Registered.Up")), Text.color(Config.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
+                if (Config.file().getBoolean("BungeeCord.Connect-Lobby")) {
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
+                        p.sendTitle(Text.color(Config.file().getString("Strings.Titles.Sending.Up")), Text.color(Config.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10);
+                    }, 5L);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
+                        Messaging.connect(p, Config.file().getString("BungeeCord.Lobby-Server"));
+                    }, 10L);
+                }
             }
         }
     }
