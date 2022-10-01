@@ -6,7 +6,7 @@
 
     <groupId>pt.josegamerpt.reallogin</groupId>
     <artifactId>RealLogin</artifactId>
-    <version>25-08-2020 Build 1</version>
+    <version>01-10-2022 Build 1</version>
     <packaging>jar</packaging>
 
     <name>RealLogin</name>
