@@ -60,8 +60,4 @@ public final class RealLogin extends JavaPlugin {
         new Metrics(this, 12577);
     }
 
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
 }
