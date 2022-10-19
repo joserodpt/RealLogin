@@ -23,5 +23,5 @@ jobs:
     - run: mvn --activate-profiles dist --no-transfer-progress package
     - uses: actions/upload-artifact@v3
       with:
-        name: RealLogin
-        path: target/RealLogin-${{ steps.project.outputs.version }}.jar
+        name: 'RealLogin (Dev Build)'
+        path: target/RealLogin*.jar
