@@ -33,3 +33,14 @@ Welcome to the **RealLogin plugin**. This is a brand new auth plugin. It aims to
 
 ----
 
+## Requirements
+* Spigot or Spigot-Based server
+* 1.13.x-1.19.x server version
+* Minimum Java 8 version
+
+----
+
+## Links
+* [SpigotMC](https://www.spigotmc.org/resources/reallogin.83139/)
+* [Discord Server](https://discord.gg/t7gfnYZKy8)
+* [bStats](https://bstats.org/plugin/bukkit/RealLogin/12577)
