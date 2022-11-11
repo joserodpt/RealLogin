@@ -7,13 +7,13 @@
 [![Stars](https://img.shields.io/github/stars/JoseGamerPT/RealLogin)](https://github.com/JoseGamerPT/RealLogin/stargazers)
 [![Chat)](https://img.shields.io/discord/817810368649887744?logo=discord&logoColor=white)](https://discord.gg/t7gfnYZKy8) 
 
-</div>
-
 <a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/spigot_46h.png" height="35"></a>
 <a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/paper_46h.png" height="35"></a>
 <a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/purpur_46h.png" height="35"></a>
 
-Welcome to the **RealLogin plugin**. This is a brand new auth plugin. It aims to be lightweight and simple to use. Try it for yourself!
+</div>
+
+Welcome to the **RealLogin plugin**! This is a brand new auth plugin. It aims to be lightweight and simple to use. Try it for yourself!
 
 ----
 
