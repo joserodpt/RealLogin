@@ -2,7 +2,7 @@
 
 ![Logo](https://i.imgur.com/A3h3Hyv.png)
 ## RealLogin - Brand new auth plugin.
-[![Build](https://img.shields.io/github/workflow/status/JoseGamerPT/RealLogin/Publish%20and%20Build)](https://github.com/JoseGamerPT/RealLogin/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/joserodpt/RealLogin/maven.yml)](https://github.com/JoseGamerPT/RealLogin/actions)
 ![Issues](https://img.shields.io/github/issues-raw/JoseGamerPT/RealLogin)
 [![Stars](https://img.shields.io/github/stars/JoseGamerPT/RealLogin)](https://github.com/JoseGamerPT/RealLogin/stargazers)
 [![Chat)](https://img.shields.io/discord/817810368649887744?logo=discord&logoColor=white)](https://discord.gg/t7gfnYZKy8) 
