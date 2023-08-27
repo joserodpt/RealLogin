@@ -1,33 +1,78 @@
-Max-Pin-Length: 4
-Hide-Inventories: false
-Use-Custom-Heads: true
-BungeeCord:
-  Connect-Lobby: false
-  Lobby-Server: "lobby"
-Strings:
-  Prefix: "&fReal&7Login "
-  Kick-Message: "&7You left the server."
-  GUI:
-    PIN: "&bPIN: &8&l"
-    Login: "&8&lLogin"
-    Register: "&c&lRegister"
-    Items:
-      Leave-Server:
-        Name: "&cLeave"
-        Description: "&7Click here to leave the server."
-      Remove-Number:
-        Name: "&aRemove Last Digit"
-        Description: "&7Click here to erase the last digit."
-      Confirm-Pin:
-        Name: "&aConfirm"
-        Description: "&7Click here to confirm your PIN. Right click to remove last digit."
-  Titles:
-    Registered:
-      Up: "&9&lRegistered!"
-      Down: "&bRemember your PIN, you will need it to log back in."
-    Login:
-      Up: "&a&lLogged in!"
-      Down: "&2Welcome back to the server."
-    Sending:
-      Up: "&6&lConnecting...."
-      Down: "&eto lobby server."
+##################################################
+#                  RealLogin                     #
+##################################################
+
+# Database Settings
+database-settings:
+  # Type of the database (MySQL, SQLite, MongoDB, JSON)
+  # Default: SQLite (preferred over JSON)
+  type: SQLite
+  # The host address of the database
+  # Default: MySQL
+  host: "localhost"
+  # Port of the database
+  # Default: 3306
+  port: 3306
+  # Username and password
+  username: "minecraft"
+  password: ""
+  # Name of the database
+  database-name: "real_login"
+  # MongoDB connection url
+  mongodb-url: "mongodb://minecraft:password@localhost:27017"
+
+# Player Settings
+player-settings:
+  # Whether that the player should not be allowed to move
+  disable-movement: true
+  # Whether that the player shouldn't have access to commands upon login
+  disable-commands: true
+  # Whether that the player should get blindness effect during logging
+  add-player-effect: true
+
+# General Settings
+general-settings:
+  # Should we automatically register online players?
+  # Requires server to be offline-mode
+  premium-auto-register: true
+  # Can we create account with mojang UUID?
+  # Works only for premium players that paid for minecraft
+  use-online-uuids: true
+  # Enable or disable cache (sessions) for offline players?
+  allow-sessions: true
+  # Minimum and maximum length of the password
+  password-length: "4;16"
+  # Maximum login and registration time (in seconds)
+  login-timeout: 60
+
+# API Settings
+api-settings:
+  # If "premium-auto-register" is enabled, which api we should use
+  # to obtain player Mojang UUID?
+  # Available are: MOJANG, CLOUD-PROTECTED
+  # Note that MOJANG is not friendly for large amount of requests,
+  # so you should consider using CLOUD-PROTECTED unless you are running
+  # small network and you have good protection against bots
+  api-site: CLOUD-PROTECTED
+  # Should we cache results from the api to avoid rate limits?
+  # We will store cache as long as server is alive (by default expires in 30 minutes)
+  cache-results: false
+
+# Server Settings
+server-settings:
+  # Is this server act as auth server? If yes, then we will redirect player
+  # to the server specified below
+  auth-server: false
+  # Lobby server (from BungeeCord config)
+  lobby-server: "lobby"
+
+# Security Settings
+security-settings:
+  # Which hash we should use for password encryption?
+  # Available are: SHA512, bCrypt
+  hash: SHA512
+  # Should we can player if provided incorrect password?
+  kick-player: false
+
+# Current config version (DO NOT CHANGE!)
+Version: 1

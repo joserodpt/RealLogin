@@ -1,0 +1,21 @@
+##################################################
+#                  RealLogin                     #
+##################################################
+# Here you can configure every message in this plugin
+
+please-login: "&cPlease login by typing &6/login <password>"
+please-register: "&cPlease register by typing &6/register <password> <password>"
+
+logged-in: "&aLogged in!"
+account-created: "&2Your account has been created! Please join again."
+
+incorrect-password: "&cYou must enter a valid password!"
+different-password: "&cProvided passwords are different!"
+password-too-short: "&cYour password is too short!"
+password-too-long: "&cYour password is too long!"
+
+login-timeout: "&cTimeout! Please join again."
+error-occurred: "&4Failed to load your data from database!"
+
+# Current config version (DO NOT CHANGE!)
+Version: 1
