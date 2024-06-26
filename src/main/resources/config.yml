@@ -1,11 +1,13 @@
-Max-Pin-Length: 4
-Hide-Inventories: false
-Use-Custom-Heads: true
-BungeeCord:
-  Connect-Lobby: false
-  Lobby-Server: "lobby"
+Version: 1
+Settings:
+  Max-Pin-Length: 4
+  Hide-Inventories: false
+  Use-Custom-Heads: true
+  BungeeCord:
+    Connect-Lobby: false
+    Lobby-Server: "lobby"
 Strings:
-  Prefix: "&fReal&7Login "
+  Prefix: "&fReal&7Login &7> &f"
   Kick-Message: "&7You left the server."
   GUI:
     PIN: "&bPIN: &8&l"

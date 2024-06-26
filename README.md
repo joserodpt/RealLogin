@@ -1,7 +1,7 @@
 <div align="center">
 
 ![Logo](https://i.imgur.com/A3h3Hyv.png)
-## RealLogin - Brand new auth plugin.
+## RealLogin - GUI auth plugin.
 [![Build](https://img.shields.io/github/actions/workflow/status/joserodpt/RealLogin/maven.yml)](https://github.com/JoseGamerPT/RealLogin/actions)
 ![Issues](https://img.shields.io/github/issues-raw/JoseGamerPT/RealLogin)
 [![Stars](https://img.shields.io/github/stars/JoseGamerPT/RealLogin)](https://github.com/JoseGamerPT/RealLogin/stargazers)
@@ -13,7 +13,7 @@
 
 </div>
 
-Welcome to the **RealLogin plugin**! This is a brand new auth plugin. It aims to be lightweight and simple to use. Try it for yourself!
+Welcome to the **RealLogin plugin**! This is an GUI auth plugin. It aims to be lightweight and simple to use. Try it for yourself!
 
 ----
 
@@ -35,7 +35,7 @@ Welcome to the **RealLogin plugin**! This is a brand new auth plugin. It aims to
 
 ## Requirements
 * Spigot or Spigot-Based server
-* 1.13.x-1.19.x server version
+* 1.13.x-1.21.x server version
 * Minimum Java 8 version
 
 ----

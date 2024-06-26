@@ -1,13 +1,7 @@
 name: RealLogin
-version: 17-7-2022 Build 1
+version: '${project.version}'
 main: pt.josegamerpt.reallogin.RealLogin
 api-version: 1.13
 prefix: RealLogin
 authors: [JoseGamer_PT]
-description: Login plugin with PIN & GUI interaction
-
-commands:
-  reallogin:
-    description: Main Command
-    usage: /<command>
-    permission: reallogin.command
+description: Login plugin with GUI PIN system.

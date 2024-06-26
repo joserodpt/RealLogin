@@ -1,5 +1,20 @@
 package pt.josegamerpt.reallogin.config;
 
+/*
+ *   _____            _ _                 _
+ *  |  __ \          | | |               (_)
+ *  | |__) |___  __ _| | |     ___   __ _ _ _ __
+ *  |  _  // _ \/ _` | | |    / _ \ / _` | | '_ \
+ *  | | \ \  __/ (_| | | |___| (_) | (_| | | | | |
+ *  |_|  \_\___|\__,_|_|______\___/ \__, |_|_| |_|
+ *                                   __/ |
+ *                                  |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealLogin
+ */
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -7,7 +22,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
-public class Players {
+public class RLPlayerConfig {
 
 	private static File file;
 	private static FileConfiguration customFile;
@@ -19,7 +34,7 @@ public class Players {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		}
 		customFile = YamlConfiguration.loadConfiguration(file);

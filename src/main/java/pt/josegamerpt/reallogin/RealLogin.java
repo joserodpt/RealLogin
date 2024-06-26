@@ -1,63 +1,68 @@
 package pt.josegamerpt.reallogin;
 
+/*
+ *   _____            _ _                 _
+ *  |  __ \          | | |               (_)
+ *  | |__) |___  __ _| | |     ___   __ _ _ _ __
+ *  |  _  // _ \/ _` | | |    / _ \ / _` | | '_ \
+ *  | | \ \  __/ (_| | | |___| (_) | (_| | | | | |
+ *  |_|  \_\___|\__,_|_|______\___/ \__, |_|_| |_|
+ *                                   __/ |
+ *                                  |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealLogin
+ */
+
 import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import pt.josegamerpt.reallogin.config.Config;
-import pt.josegamerpt.reallogin.config.Players;
-import pt.josegamerpt.reallogin.player.PlayerListener;
+import pt.josegamerpt.reallogin.config.RLConfig;
+import pt.josegamerpt.reallogin.config.RLPlayerConfig;
+import pt.josegamerpt.reallogin.managers.GUIManager;
+import pt.josegamerpt.reallogin.managers.PlayerManager;
 import pt.josegamerpt.reallogin.utils.Text;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public final class RealLogin extends JavaPlugin {
 
-    public static HashMap<Player, String> pin = new HashMap<>();
-    public static HashMap<Player, ItemStack[]> inv = new HashMap<>();
-    public static ArrayList<Player> frozen = new ArrayList<>();
-    private static String prefixColor = "&fReal&7Login ";
-    private static String version;
-    PluginManager pm = Bukkit.getPluginManager();
-
-    public static String getPrefix() {
-        return prefixColor;
-    }
-
-    public static void prepPl(Player p) {
-        pin.put(p, "");
-        frozen.add(p);
-    }
-
-    public static String getVersion() {
-        return version;
-    }
+    public PlayerManager playerManager;
+    public GUIManager guiManager;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        version = getDescription().getVersion();
-
         //config
         saveDefaultConfig();
-        Config.setup(this);
-        Players.setup(this);
+        RLConfig.setup(this);
+        RLPlayerConfig.setup(this);
 
-        prefixColor = Config.file().getString("Strings.Prefix");
+        //managers
+        playerManager = new PlayerManager(this);
+        guiManager = new GUIManager(this);
+
+        if (RLConfig.file().getBoolean("Settings.Bungeecord.Enabled")) {
+            this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            getLogger().info("BungeeCord mode is enabled.");
+        }
+
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
 
         //commands
         CommandManager commandManager = new CommandManager(this);
-        commandManager.getMessageHandler().register("cmd.no.console", sender -> sender.sendMessage(Text.color(prefixColor + "&f| &cThis command can't be used in the console!")));
-        commandManager.getMessageHandler().register("cmd.no.exists", sender -> sender.sendMessage(Text.color(prefixColor + "&f| &cThe command you're trying to use doesn't exist!")));
-        commandManager.getMessageHandler().register("cmd.no.permission", sender -> sender.sendMessage(Text.color(prefixColor + "&f| &cYou don't have permission to execute this command!")));
-        commandManager.getMessageHandler().register("cmd.wrong.usage", sender -> sender.sendMessage(Text.color(prefixColor + "&f| &c&cWrong usage for the command!")));
-        commandManager.register(new Command());
-        pm.registerEvents(new PlayerListener(), this);
+        commandManager.getMessageHandler().register("cmd.no.console", sender -> Text.send(sender,"&cThis command can't be used in the console!", true));
+        commandManager.getMessageHandler().register("cmd.no.exists", sender -> Text.send(sender,"&cThe command you're trying to use doesn't exist!", true));
+        commandManager.getMessageHandler().register("cmd.no.permission", sender -> Text.send(sender,"&cYou don't have permission to execute this command!", true));
+        commandManager.getMessageHandler().register("cmd.wrong.usage", sender -> Text.send(sender,"&cWrong usage for the command!", true));
+        commandManager.register(new RealLoginCommand(this));
 
         new Metrics(this, 12577);
+
+        getLogger().info("RealLogin v" + getDescription().getVersion() + " enabled.");
     }
 
+    public PlayerManager getPlayerManager() {
+        return this.playerManager;
+    }
+
+    public GUIManager getGUIManager() { return this.guiManager; }
 }
