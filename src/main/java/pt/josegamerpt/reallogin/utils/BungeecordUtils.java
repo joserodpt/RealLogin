@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BungeecordUtils {
-
     public static void connect(String name, Player player, JavaPlugin jp) {
         if (player == null) {
             return;

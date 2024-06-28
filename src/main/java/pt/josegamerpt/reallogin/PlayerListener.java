@@ -35,21 +35,19 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         rl.getPlayerManager().setupPlayerLogin(e.getPlayer());
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(RealLogin.getPlugin(RealLogin.class), () -> {
-            openGUI(e.getPlayer());
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
+
+            if (RLPlayerConfig.file().get(e.getPlayer().getName()) != null) {
+                rl.getGUIManager().openLoginGUI(e.getPlayer(), Sound.ENTITY_VILLAGER_YES);
+            } else {
+                rl.getGUIManager().openRegisterGUI(e.getPlayer(), Sound.ENTITY_VILLAGER_YES);
+            }
+
             if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
                 rl.getPlayerManager().getPlayerInventories().put(e.getPlayer(), e.getPlayer().getInventory().getContents());
                 e.getPlayer().getInventory().clear();
             }
-        }, 10L);
-    }
-
-    public void openGUI(Player p) {
-        if (RLPlayerConfig.file().get(p.getName()) != null) {
-            rl.getGUIManager().openPinGUI(p, 0);
-        } else {
-            rl.getGUIManager().openRegisterGUI(p, Sound.ENTITY_VILLAGER_YES);
-        }
+        }, 5L);
     }
 
     @EventHandler
@@ -74,16 +72,14 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent e)
-    {
+    public void onPlayerChat(AsyncPlayerChatEvent e) {
         if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent e)
-    {
+    public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
         if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
             e.setCancelled(true);
         }

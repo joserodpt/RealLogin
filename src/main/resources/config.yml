@@ -10,7 +10,7 @@ Strings:
   Prefix: "&fReal&7Login &7> &f"
   Kick-Message: "&7You left the server."
   GUI:
-    PIN: "&bPIN: &8&l"
+    PIN: "&6&lPIN: &8&l"
     Login: "&8&lLogin"
     Register: "&c&lRegister"
     Items:

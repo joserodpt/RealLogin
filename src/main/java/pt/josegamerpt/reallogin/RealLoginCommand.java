@@ -34,14 +34,13 @@ public class RealLoginCommand extends CommandBase {
     }
 
     @Default
-    @Permission("reallogin.command")
     @SuppressWarnings("unused")
     public void defaultCommand(CommandSender commandSender) {
         Text.send(commandSender,
                 "&fReal&7Login &6v" + this.rl.getDescription().getVersion(), false);
     }
 
-    @SubCommand("resetPin")
+    @SubCommand("resetpin")
     @Permission("reallogin.resetpin")
     @SuppressWarnings("unused")
     public void resetPinCommand(CommandSender commandSender) {
@@ -52,7 +51,7 @@ public class RealLoginCommand extends CommandBase {
 
     @SubCommand("reload")
     @Alias("rl")
-    @Permission("reallogin.reload")
+    @Permission("reallogin.admin")
     @SuppressWarnings("unused")
     public void reload(CommandSender commandSender) {
         RLConfig.reload();
@@ -62,6 +61,7 @@ public class RealLoginCommand extends CommandBase {
     }
 
     @SubCommand("deletepin")
+    @Alias("delpin")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
     public void deletepincmd(CommandSender commandSender, final String name) {

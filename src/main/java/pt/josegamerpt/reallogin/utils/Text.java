@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Text {
-
-
     public static String color(final String string) {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
@@ -43,5 +41,4 @@ public class Text {
     public static String getPrefix() {
         return RLConfig.file().getString("Strings.Prefix");
     }
-
 }

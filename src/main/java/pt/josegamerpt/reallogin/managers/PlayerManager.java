@@ -26,14 +26,9 @@ import java.util.Map;
 
 public class PlayerManager {
     
-    private RealLogin rl;
     private List<Player> frozen = new ArrayList<>();
     private Map<Player, String> pin = new HashMap<>();
     private Map<Player, ItemStack[]> inv = new HashMap<>();
-    
-    public PlayerManager(RealLogin rl) {
-        this.rl = rl;
-    }
 
     public void setupPlayerLogin(Player p) {
         this.pin.put(p, "");
