@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin;
+package joserodpt.reallogin;
 
 /*
  *   _____            _ _                 _
@@ -11,10 +11,18 @@ package pt.josegamerpt.reallogin;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 
+import joserodpt.reallogin.config.RLConfig;
+import joserodpt.reallogin.config.RLPlayerLegacyConfig;
+import joserodpt.reallogin.config.RLSQLConfig;
+import joserodpt.reallogin.managers.DatabaseManager;
+import joserodpt.reallogin.managers.PlayerManager;
+import joserodpt.reallogin.player.PlayerListener;
+import joserodpt.reallogin.utils.GUIBuilder;
+import joserodpt.reallogin.utils.Text;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
@@ -22,12 +30,9 @@ import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
-import pt.josegamerpt.reallogin.config.RLConfig;
-import pt.josegamerpt.reallogin.config.RLPlayerConfig;
-import pt.josegamerpt.reallogin.managers.GUIManager;
-import pt.josegamerpt.reallogin.managers.PlayerManager;
-import pt.josegamerpt.reallogin.utils.Text;
+import joserodpt.reallogin.managers.GUIManager;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -35,6 +40,7 @@ public final class RealLogin extends JavaPlugin {
 
     public PlayerManager playerManager;
     public GUIManager guiManager;
+    public DatabaseManager databaseManager;
 
     public PlayerManager getPlayerManager() { return this.playerManager; }
 
@@ -48,17 +54,30 @@ public final class RealLogin extends JavaPlugin {
         final long start = System.currentTimeMillis();
 
         RLConfig.setup(this);
-        RLPlayerConfig.setup(this);
+        RLPlayerLegacyConfig.setup(this);
+        RLSQLConfig.setup(this);
 
-        playerManager = new PlayerManager();
-        guiManager = new GUIManager(this);
+        try {
+            getLogger().info("Loading database...");
+            databaseManager = new DatabaseManager(this);
+            getLogger().info("Database loaded successfully.");
+        } catch (SQLException e) {
+            getLogger().warning("Error while trying to connect to the database. Disabling plugin.");
+            e.printStackTrace();
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         if (RLConfig.file().getBoolean("Settings.Bungeecord.Enabled")) {
             this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
             getLogger().info("BungeeCord mode is enabled.");
         }
 
+        playerManager = new PlayerManager();
+        guiManager = new GUIManager(this);
+
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
+        Bukkit.getPluginManager().registerEvents(GUIBuilder.getListener(), this);
 
         CommandManager commandManager = new CommandManager(this);
         commandManager.getMessageHandler().register("cmd.no.console", sender -> Text.send(sender,"&cThis command can't be used in the console!", true));
@@ -81,6 +100,21 @@ public final class RealLogin extends JavaPlugin {
         }
 
 
+        /*
+        try {
+            String a = PBKDF2.generateStorngPasswordHash("2462");
+            getLogger().info("1. " + a);
+            getLogger().info("2. " + PBKDF2.validatePassword("2462", a));
+            getLogger().info("3. " + PBKDF2.validatePassword("1234", a));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+
+         */
+
+
         getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");
         getLogger().info("<------------------ RealLogin vPT ------------------>".replace("PT", this.getDescription().getVersion()));
     }
@@ -93,10 +127,15 @@ public final class RealLogin extends JavaPlugin {
         logWithColor("  &b| | \\ \\  __/ (_| | | |___| (_) | (_| | | | | |");
         logWithColor("  &b|_|  \\_\\___|\\__,_|_|______\\___/ \\__, |_|_| |_|");
         logWithColor("  &b                                 __/ |");
-        logWithColor("      Made by: &9JoseGamer_PT &b      |___/ &8v: &9" + this.getDescription().getVersion());
+        logWithColor("      Made by: &9JoseGamer_PT &b      |___/  &8v: &9" + this.getDescription().getVersion());
+        logWithColor("");
     }
 
     public void logWithColor(String s) {
         getServer().getConsoleSender().sendMessage("[" + this.getDescription().getName() + "] " + Text.color(s));
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 }

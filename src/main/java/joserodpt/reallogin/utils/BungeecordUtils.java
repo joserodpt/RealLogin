@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin.utils;
+package joserodpt.reallogin.utils;
 
 /*
  *   _____            _ _                 _
@@ -11,23 +11,31 @@ package pt.josegamerpt.reallogin.utils;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class BungeecordUtils {
     public static void connect(String name, Player player, JavaPlugin jp) {
         if (player == null) {
             return;
         }
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Connect");
-        out.writeUTF(name);
-        player.sendPluginMessage(jp, "BungeeCord", out.toByteArray());
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            out.write("Connect".getBytes(StandardCharsets.UTF_8));
+            out.write(name.getBytes(StandardCharsets.UTF_8));
+            player.sendPluginMessage(jp, "BungeeCord", out.toByteArray());
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("Error sending player to server:");
+            e.printStackTrace();
+        }
     }
 }

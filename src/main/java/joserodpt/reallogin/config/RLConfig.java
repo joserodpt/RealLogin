@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin.config;
+package joserodpt.reallogin.config;
 
 /*
  *   _____            _ _                 _
@@ -11,7 +11,7 @@ package pt.josegamerpt.reallogin.config;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 

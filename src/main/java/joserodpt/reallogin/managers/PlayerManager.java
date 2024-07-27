@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin.managers;
+package joserodpt.reallogin.managers;
 
 /*
  *   _____            _ _                 _
@@ -11,13 +11,12 @@ package pt.josegamerpt.reallogin.managers;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import pt.josegamerpt.reallogin.RealLogin;
 
 import java.util.ArrayList;
 import java.util.HashMap;

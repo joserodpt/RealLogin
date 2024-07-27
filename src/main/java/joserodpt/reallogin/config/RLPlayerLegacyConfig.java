@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin.config;
+package joserodpt.reallogin.config;
 
 /*
  *   _____            _ _                 _
@@ -11,7 +11,7 @@ package pt.josegamerpt.reallogin.config;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 
@@ -22,7 +22,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 
-public class RLPlayerConfig {
+public class RLPlayerLegacyConfig {
 
 	private static File file;
 	private static FileConfiguration customFile;
@@ -50,9 +50,5 @@ public class RLPlayerConfig {
 		} catch (IOException e) {
 			System.out.println("Couldn't save " + name + "!");
 		}
-	}
-
-	public static void reload() {
-		customFile = YamlConfiguration.loadConfiguration(file);
 	}
 }

@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin;
+package joserodpt.reallogin.player;
 
 /*
  *   _____            _ _                 _
@@ -11,18 +11,18 @@ package pt.josegamerpt.reallogin;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues
+ * @author José Rodrigues © 2020-2024
  * @link https://github.com/joserodpt/RealLogin
  */
 
+import joserodpt.reallogin.RealLogin;
+import joserodpt.reallogin.config.RLConfig;
+import joserodpt.reallogin.config.RLPlayerLegacyConfig;
+import joserodpt.reallogin.utils.PBKDF2;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
-import pt.josegamerpt.reallogin.config.RLConfig;
-import pt.josegamerpt.reallogin.config.RLPlayerConfig;
 
 public class PlayerListener implements Listener {
 
@@ -36,11 +36,30 @@ public class PlayerListener implements Listener {
         rl.getPlayerManager().setupPlayerLogin(e.getPlayer());
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
+            // check if player has legacy pin data
+            String name = e.getPlayer().getName();
+            String pass = RLPlayerLegacyConfig.file().getString(name);
+            if (pass != null && !pass.isEmpty()) {
+                rl.getLogger().info("Migrating player data for " + name + "...");
+                String password;
+                try {
+                    password = PBKDF2.hash(RLPlayerLegacyConfig.file().getString(name));
+                    rl.getDatabaseManager().savePlayerData(new PlayerDataRow(Bukkit.getPlayer(name), password), false);
+                } catch (Exception ex) {
+                    rl.getLogger().severe("Error while migrating the player data for " + name + ":");
+                    ex.printStackTrace();
+                    return;
+                }
 
-            if (RLPlayerConfig.file().get(e.getPlayer().getName()) != null) {
-                rl.getGUIManager().openLoginGUI(e.getPlayer(), Sound.ENTITY_VILLAGER_YES);
+                RLPlayerLegacyConfig.file().set(name, null);
+                RLPlayerLegacyConfig.save();
+                rl.getLogger().info("Player data for " + name + " migrated successfully.");
+            }
+
+            if (rl.getDatabaseManager().isPlayerRegistered(e.getPlayer())) {
+                rl.getGUIManager().openLoginGUI(e.getPlayer());
             } else {
-                rl.getGUIManager().openRegisterGUI(e.getPlayer(), Sound.ENTITY_VILLAGER_YES);
+                rl.getGUIManager().openRegisterGUI(e.getPlayer());
             }
 
             if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
@@ -48,6 +67,8 @@ public class PlayerListener implements Listener {
                 e.getPlayer().getInventory().clear();
             }
         }, 5L);
+
+        this.rl.getDatabaseManager().savePlayerLogin(e.getPlayer(), true);
     }
 
     @EventHandler

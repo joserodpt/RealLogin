@@ -1,6 +1,6 @@
 name: RealLogin
 version: '${project.version}'
-main: pt.josegamerpt.reallogin.RealLogin
+main: joserodpt.reallogin.RealLogin
 api-version: 1.13
 prefix: RealLogin
 authors: [JoseGamer_PT]

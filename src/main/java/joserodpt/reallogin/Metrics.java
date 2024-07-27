@@ -1,4 +1,4 @@
-package pt.josegamerpt.reallogin;
+package joserodpt.reallogin;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;

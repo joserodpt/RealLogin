@@ -1,8 +1,9 @@
-Version: 1
+Version: 2
 Settings:
   Max-Pin-Length: 4
   Hide-Inventories: false
   Use-Custom-Heads: true
+  Date-Format: "dd/MM/yyyy HH:mm:ss"
   BungeeCord:
     Connect-Lobby: false
     Lobby-Server: "lobby"
