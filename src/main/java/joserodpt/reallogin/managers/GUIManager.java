@@ -39,7 +39,7 @@ import java.util.function.BiConsumer;
 
 public class GUIManager {
 
-    private RealLogin rl;
+    private final RealLogin rl;
 
     public GUIManager(RealLogin rl) {
         this.rl = rl;
@@ -50,7 +50,7 @@ public class GUIManager {
 
         guiBuilder.setItem(2, 8,
                 Items.createItemLore(Material.EMERALD, RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))),
-                event -> confirmAction(event.getClick(), p, this.rl.getPlayerManager().getPlayerPIN().get(p), guiBuilder));
+                event -> confirmAction(event.getClick(), p, this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), guiBuilder));
 
         guiBuilder.setCloseAction(event -> openRegisterGUI(p));
 
@@ -68,7 +68,7 @@ public class GUIManager {
 
     private void commonLoginRegister(Player p, GUIBuilder guiBuilder) {
         p.setInvulnerable(true);
-        this.rl.getPlayerManager().getPlayerPIN().put(p, "");
+        //this.rl.getPlayerManager().getPlayerPIN().put(p.getUniqueId(), "");
 
         setPinItems(guiBuilder, p);
 
@@ -130,18 +130,18 @@ public class GUIManager {
     }
 
     public void removeNumber(Player p, GUIBuilder g) {
-        updatePIN(p, g, -1, Sound.BLOCK_ANVIL_BREAK, 1, 20);
+        updatePIN(p, g, -1, Sound.BLOCK_ANVIL_BREAK, 20);
     }
 
     public void addNumber(Player p, int i, GUIBuilder g) {
-        if (this.rl.getPlayerManager().getPlayerPIN().get(p).length() < RLConfig.file().getInt("Settings.Max-Pin-Length")) {
-            updatePIN(p, g, i, Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 50);
+        if (this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()).length() < RLConfig.file().getInt("Settings.Max-Pin-Length")) {
+            updatePIN(p, g, i, Sound.BLOCK_NOTE_BLOCK_CHIME, 50);
         }
     }
 
-    private void updatePIN(Player p, GUIBuilder g, int i, Sound sound, float volume, float pitch) {
+    private void updatePIN(Player p, GUIBuilder g, int i, Sound sound, float pitch) {
         PlayerManager playerManager = this.rl.getPlayerManager();
-        String currentPIN = playerManager.getPlayerPIN().get(p);
+        String currentPIN = playerManager.getPlayerPIN(p.getUniqueId());
 
         if (i == -1 && !currentPIN.isEmpty()) {
             currentPIN = currentPIN.substring(0, currentPIN.length() - 1);
@@ -149,8 +149,8 @@ public class GUIManager {
             currentPIN += i;
         }
 
-        playerManager.getPlayerPIN().put(p, currentPIN);
-        p.playSound(p.getLocation(), sound, volume, pitch);
+        playerManager.setPlayerPin(p.getUniqueId(), currentPIN);
+        p.playSound(p.getLocation(), sound, (float) 1, pitch);
         g.updateTitle(Text.color(RLConfig.file().getString("Strings.GUI.PIN") + currentPIN));
         checkPIN(p, g);
     }
@@ -165,29 +165,23 @@ public class GUIManager {
             return;
         }
         try {
-            if (PBKDF2.equalHash(this.rl.getPlayerManager().getPlayerPIN().get(p), hashedPassword)) {
+            if (PBKDF2.equalHash(this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), hashedPassword)) {
                 g.setCloseAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
                 p.closeInventory();
                 p.setInvulnerable(false);
 
-                this.rl.getPlayerManager().getFrozenPlayers().remove(p);
-
+                this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
                 if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-                    p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventories().get(p));
-                    this.rl.getPlayerManager().getPlayerInventories().remove(p);
+                    p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventory(p.getUniqueId()));
                 }
-                this.rl.getPlayerManager().getPlayerPIN().remove(p);
+
                 p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Login.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
 
                 this.rl.getDatabaseManager().savePlayerData(pdo, true);
 
                 if (RLConfig.file().getBoolean("Settings.BungeeCord.Connect-Lobby")) {
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-                        p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Sending.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10);
-                    }, 5L);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-                        BungeecordUtils.connect(RLConfig.file().getString("Settings.BungeeCord.Lobby-Server"), p, this.rl);
-                    }, 10L);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Sending.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10), 5L);
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> BungeecordUtils.connect(RLConfig.file().getString("Settings.BungeeCord.Lobby-Server"), p, this.rl), 10L);
                 }
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -209,12 +203,10 @@ public class GUIManager {
                     p.closeInventory();
                     p.setInvulnerable(false);
 
-                    this.rl.getPlayerManager().getFrozenPlayers().remove(p);
-                    if (this.rl.getPlayerManager().getPlayerInventories().containsKey(p)) {
-                        p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventories().get(p));
-                        this.rl.getPlayerManager().getPlayerInventories().remove(p);
+                    this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
+                    if (this.rl.getPlayerManager().hasPlayerInventory(p.getUniqueId())) {
+                        p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventory(p.getUniqueId()));
                     }
-                    this.rl.getPlayerManager().getPlayerPIN().remove(p);
 
                     p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Registered.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
                     if (RLConfig.file().getBoolean("Settings.BungeeCord.Connect-Lobby")) {

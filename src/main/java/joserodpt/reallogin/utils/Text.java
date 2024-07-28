@@ -51,8 +51,7 @@ public class Text {
         return sdf.format(new Date(l));
     }
 
-    public static String diffTimeStampToNow(long dateTimestamp) {
-        long diff = System.currentTimeMillis() - dateTimestamp;
+    public static String formatTimestampTime(long diff) {
         long diffSeconds = diff / 1000 % 60;
         long diffMinutes = diff / (60 * 1000) % 60;
         long diffHours = diff / (60 * 60 * 1000) % 24;
@@ -84,5 +83,10 @@ public class Text {
         }
 
         return timeDiff.toString().trim();
+    }
+
+    public static String diffTimeStampToNow(long dateTimestamp) {
+        long diff = System.currentTimeMillis() - dateTimestamp;
+        return formatTimestampTime(diff);
     }
 }

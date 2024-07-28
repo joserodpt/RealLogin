@@ -73,7 +73,7 @@ public final class RealLogin extends JavaPlugin {
             getLogger().info("BungeeCord mode is enabled.");
         }
 
-        playerManager = new PlayerManager();
+        playerManager = new PlayerManager(this);
         guiManager = new GUIManager(this);
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -117,6 +117,18 @@ public final class RealLogin extends JavaPlugin {
 
         getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");
         getLogger().info("<------------------ RealLogin vPT ------------------>".replace("PT", this.getDescription().getVersion()));
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Disabling RealLogin...");
+        if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId()));
+            });
+        }
+        playerManager.stopTickTask();
+        getLogger().info("RealLogin disabled.");
     }
 
     private void printASCII() {

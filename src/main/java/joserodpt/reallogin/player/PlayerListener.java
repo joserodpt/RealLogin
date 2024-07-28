@@ -26,7 +26,8 @@ import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
 
-    private RealLogin rl;
+    private final RealLogin rl;
+
     public PlayerListener(RealLogin rl) {
         this.rl = rl;
     }
@@ -35,27 +36,33 @@ public class PlayerListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         rl.getPlayerManager().setupPlayerLogin(e.getPlayer());
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-            // check if player has legacy pin data
-            String name = e.getPlayer().getName();
-            String pass = RLPlayerLegacyConfig.file().getString(name);
-            if (pass != null && !pass.isEmpty()) {
-                rl.getLogger().info("Migrating player data for " + name + "...");
-                String password;
-                try {
-                    password = PBKDF2.hash(RLPlayerLegacyConfig.file().getString(name));
-                    rl.getDatabaseManager().savePlayerData(new PlayerDataRow(Bukkit.getPlayer(name), password), false);
-                } catch (Exception ex) {
-                    rl.getLogger().severe("Error while migrating the player data for " + name + ":");
-                    ex.printStackTrace();
-                    return;
-                }
-
-                RLPlayerLegacyConfig.file().set(name, null);
-                RLPlayerLegacyConfig.save();
-                rl.getLogger().info("Player data for " + name + " migrated successfully.");
+        // check if player has legacy pin data
+        String name = e.getPlayer().getName();
+        String pass = RLPlayerLegacyConfig.file().getString(name);
+        if (pass != null && !pass.isEmpty()) {
+            rl.getLogger().info("Migrating player data for " + name + "...");
+            String password;
+            try {
+                password = PBKDF2.hash(RLPlayerLegacyConfig.file().getString(name));
+                rl.getDatabaseManager().savePlayerData(new PlayerDataRow(Bukkit.getPlayer(name), password), false);
+            } catch (Exception ex) {
+                rl.getLogger().severe("Error while migrating the player data for " + name + ":");
+                ex.printStackTrace();
+                return;
             }
 
+            RLPlayerLegacyConfig.file().set(name, null);
+            RLPlayerLegacyConfig.save();
+            rl.getLogger().info("Player data for " + name + " migrated successfully.");
+        }
+
+        this.rl.getDatabaseManager().savePlayerLogin(e.getPlayer(), true);
+
+        if (rl.getPlayerManager().doesPlayerHaveSession(e.getPlayer().getUniqueId())) {
+            return;
+        }
+
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
             if (rl.getDatabaseManager().isPlayerRegistered(e.getPlayer())) {
                 rl.getGUIManager().openLoginGUI(e.getPlayer());
             } else {
@@ -63,45 +70,43 @@ public class PlayerListener implements Listener {
             }
 
             if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-                rl.getPlayerManager().getPlayerInventories().put(e.getPlayer(), e.getPlayer().getInventory().getContents());
+                rl.getPlayerManager().addPlayerInventory(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getContents());
                 e.getPlayer().getInventory().clear();
             }
         }, 5L);
-
-        this.rl.getDatabaseManager().savePlayerLogin(e.getPlayer(), true);
     }
 
     @EventHandler
     public void onWalk(PlayerMoveEvent e) {
-        if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
+        if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
-        if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
+        if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e) {
-        if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
+        if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
-        if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
+        if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent e) {
-        if (rl.getPlayerManager().getFrozenPlayers().contains(e.getPlayer())) {
+        if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
         }
     }

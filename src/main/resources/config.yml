@@ -4,6 +4,7 @@ Settings:
   Hide-Inventories: false
   Use-Custom-Heads: true
   Date-Format: "dd/MM/yyyy HH:mm:ss"
+  Max-Session-Time: 120
   BungeeCord:
     Connect-Lobby: false
     Lobby-Server: "lobby"

@@ -15,34 +15,103 @@ package joserodpt.reallogin.managers;
  * @link https://github.com/joserodpt/RealLogin
  */
 
+import joserodpt.reallogin.RealLogin;
+import joserodpt.reallogin.config.RLConfig;
+import joserodpt.reallogin.utils.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class PlayerManager {
-    
-    private List<Player> frozen = new ArrayList<>();
-    private Map<Player, String> pin = new HashMap<>();
-    private Map<Player, ItemStack[]> inv = new HashMap<>();
+
+    private final RealLogin rl;
+
+    public PlayerManager(RealLogin rl) {
+        this.rl = rl;
+        startTickTask();
+    }
+
+    private final Map<UUID, String> pin = new HashMap<>();
+    private final Map<UUID, ItemStack[]> inv = new HashMap<>();
+    private final Map<UUID, Long> sessionTime = new HashMap<>();
+
+    private BukkitTask task;
+
+    public void startTickTask() {
+        if (RLConfig.file().getLong("Settings.Max-Session-Time") <= 0) {
+            return;
+        }
+        if (task == null) {
+            task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    //fix concurrent modification exception
+                    new HashMap<>(sessionTime).forEach((uuid, time) -> {
+                        if (time <= 0) {
+                            sessionTime.remove(uuid);
+                        } else {
+                            sessionTime.put(uuid, time - 1);
+                        }
+                    });
+                }
+            }.runTaskTimer(rl, 0, 20);
+        }
+    }
+
+    public void stopTickTask() {
+        if (task != null) {
+            task.cancel();
+        }
+    }
 
     public void setupPlayerLogin(Player p) {
-        this.pin.put(p, "");
-        this.frozen.add(p);
+        if (rl.getPlayerManager().doesPlayerHaveSession(p.getUniqueId())) {
+            return;
+        }
+
+        this.pin.put(p.getUniqueId(), "");
     }
 
-    public Map<Player, ItemStack[]> getPlayerInventories() {
-        return this.inv;
+    public boolean hasPlayerInventory(UUID uuid) {
+        return this.inv.containsKey(uuid);
     }
 
-    public List<Player> getFrozenPlayers() {
-        return this.frozen;
+    public void addPlayerInventory(UUID uuid, ItemStack[] inv) {
+        this.inv.put(uuid, inv);
     }
 
-    public Map<Player, String> getPlayerPIN() {
-        return this.pin;
+    public ItemStack[] getPlayerInventory(UUID uuid) {
+        return this.inv.remove(uuid);
+    }
+
+    public boolean isPlayerFronzen(UUID uuid) {
+        return this.pin.containsKey(uuid);
+    }
+
+    public String getPlayerPIN(UUID uniqueId) {
+        return this.pin.get(uniqueId);
+    }
+
+    public void setPlayerPin(UUID uniqueId, String currentPIN) {
+        this.pin.put(uniqueId, currentPIN);
+    }
+
+    public void loginGrantedForPlayer(UUID uniqueId) {
+        this.pin.remove(uniqueId);
+        if (RLConfig.file().getLong("Settings.Max-Session-Time") > 0)
+            this.sessionTime.put(uniqueId, RLConfig.file().getLong("Settings.Max-Session-Time"));
+    }
+
+    public boolean doesPlayerHaveSession(UUID uniqueId) {
+        return this.sessionTime.containsKey(uniqueId);
+    }
+
+    public String getSessionTimeLeft(UUID uuid) {
+        return Text.formatTimestampTime(this.sessionTime.get(uuid) * 1000);
     }
 }

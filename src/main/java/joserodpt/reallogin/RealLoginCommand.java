@@ -73,11 +73,18 @@ public class RealLoginCommand extends CommandBase {
         Text.send(commandSender, "&fInformation for &b" + name, true);
         Text.send(commandSender, " > &fLocale: &a" + pdo.getLocale(), false);
 
+        boolean hasTimeSession = rl.getPlayerManager().doesPlayerHaveSession(pdo.getUUID());
+
+        Text.send(commandSender, " > &fHas Time Session: " + (hasTimeSession ? "&aTrue" : "&cFalse"), false);
+        if (hasTimeSession) {
+            Text.send(commandSender, "   &fTime Left: &a" + rl.getPlayerManager().getSessionTimeLeft(pdo.getUUID()), false);
+        }
+
         List<PlayerLoginRow> logins = rl.getDatabaseManager().getPlayerLogins(name);
 
         Text.send(commandSender, " > &fLogin count: &a" + logins.size(), false);
         Text.send(commandSender, " > &fLast 10 logins:", false);
-        for (int i = 0; i < 10 && i < logins.size(); ++i) {
+        for (int i = 0; i <= 10 && i < logins.size(); ++i) {
             PlayerLoginRow plr = logins.get(i);
             Text.send(commandSender, "   &f" + (i + 1) + ". &a" + plr.getDate() + " &ffrom &a" + plr.getIP() + " &e(" + Text.diffTimeStampToNow(plr.getDateTimestamp()) + " ago)", false);
         }
@@ -95,6 +102,7 @@ public class RealLoginCommand extends CommandBase {
     @SuppressWarnings("unused")
     public void reloadcmd(CommandSender commandSender) {
         RLConfig.reload();
+        rl.getPlayerManager().startTickTask();
         RLSQLConfig.reload();
 
         Text.send(commandSender, "&aReloaded.", true);
