@@ -40,7 +40,7 @@ public class RLConfig implements Listener {
                     GeneralSettings.DEFAULT,
                     LoaderSettings.builder().setAutoUpdate(true).build(),
                     DumperSettings.DEFAULT,
-                    UpdaterSettings.builder().setVersioning(new BasicVersioning("Version")).build());
+                    UpdaterSettings.builder().setVersioning(new BasicVersioning("Version")).addIgnoredRoute("2", "Locations", '.').build());
         } catch (final IOException e) {
             Bukkit.getLogger().severe( "Couldn't setup " + name + "!");
             Bukkit.getLogger().severe(e.getMessage());

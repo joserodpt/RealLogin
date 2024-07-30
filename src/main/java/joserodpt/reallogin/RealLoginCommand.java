@@ -19,9 +19,11 @@ import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
 import joserodpt.reallogin.player.PlayerLoginRow;
+import joserodpt.reallogin.utils.LocationUtils;
 import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import joserodpt.reallogin.utils.Text;
@@ -56,6 +58,84 @@ public class RealLoginCommand extends CommandBase {
 
         this.rl.getDatabaseManager().deletePlayerData(((Player) commandSender));
         this.rl.getGUIManager().openRegisterGUI(((Player) commandSender));
+    }
+
+    @SubCommand("settplogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void settplogin(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.", true);
+            return;
+        }
+
+        Player p = (Player) commandSender;
+        RLConfig.file().set("Locations.TPLogin", LocationUtils.serialize(p.getLocation()));
+        RLConfig.save();
+        Text.send(p, "&aLogin location set.", true);
+    }
+
+    @SubCommand("settpafterlogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void settpafterlogin(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.", true);
+            return;
+        }
+
+        Player p = (Player) commandSender;
+        RLConfig.file().set("Locations.TPAfterLogin", LocationUtils.serialize(p.getLocation()));
+        RLConfig.save();
+        Text.send(p, "&aAfter Login location set.", true);
+    }
+
+    @SubCommand("tplogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void gotptplogin(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.", true);
+            return;
+        }
+        Player p = (Player) commandSender;
+        Location l = LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPLogin"));
+
+        p.teleport(l);
+        Text.send(p, "&aTeleported to the login location.", true);
+    }
+
+    @SubCommand("tpafterlogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void gotptpafterlogin(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.", true);
+            return;
+        }
+        Player p = (Player) commandSender;
+        Location l = LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPAfterLogin"));
+
+        p.teleport(l);
+        Text.send(p, "&aTeleported to the after login location.", true);
+    }
+
+    @SubCommand("deltplogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void deltplogin(CommandSender commandSender) {
+        RLConfig.file().remove("Locations.TPLogin");
+        RLConfig.save();
+        Text.send(commandSender, "&aDeleted the login location.", true);
+    }
+
+    @SubCommand("deltpafterlogin")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void deltpafterlogin(CommandSender commandSender) {
+        RLConfig.file().remove("Locations.TPAfterLogin");
+        RLConfig.save();
+        Text.send(commandSender, "&aDeleted the after login location.", true);
     }
 
     @SubCommand("info")

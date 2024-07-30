@@ -99,22 +99,6 @@ public final class RealLogin extends JavaPlugin {
             }
         }
 
-
-        /*
-        try {
-            String a = PBKDF2.generateStorngPasswordHash("2462");
-            getLogger().info("1. " + a);
-            getLogger().info("2. " + PBKDF2.validatePassword("2462", a));
-            getLogger().info("3. " + PBKDF2.validatePassword("1234", a));
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeySpecException e) {
-            throw new RuntimeException(e);
-        }
-
-         */
-
-
         getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");
         getLogger().info("<------------------ RealLogin vPT ------------------>".replace("PT", this.getDescription().getVersion()));
     }

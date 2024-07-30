@@ -19,7 +19,6 @@ import dev.dbassett.skullcreator.SkullCreator;
 import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
-import joserodpt.reallogin.utils.BungeecordUtils;
 import joserodpt.reallogin.utils.GUIBuilder;
 import joserodpt.reallogin.utils.Items;
 import joserodpt.reallogin.utils.PBKDF2;
@@ -170,19 +169,10 @@ public class GUIManager {
                 p.closeInventory();
                 p.setInvulnerable(false);
 
-                this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
-                if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-                    p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventory(p.getUniqueId()));
-                }
-
                 p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Login.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
 
+                this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
                 this.rl.getDatabaseManager().savePlayerData(pdo, true);
-
-                if (RLConfig.file().getBoolean("Settings.BungeeCord.Connect-Lobby")) {
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Sending.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10), 5L);
-                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> BungeecordUtils.connect(RLConfig.file().getString("Settings.BungeeCord.Lobby-Server"), p, this.rl), 10L);
-                }
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             rl.getLogger().severe("Error while comparing hashed passwords: " + e.getMessage());
@@ -203,21 +193,9 @@ public class GUIManager {
                     p.closeInventory();
                     p.setInvulnerable(false);
 
-                    this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
-                    if (this.rl.getPlayerManager().hasPlayerInventory(p.getUniqueId())) {
-                        p.getInventory().setContents(this.rl.getPlayerManager().getPlayerInventory(p.getUniqueId()));
-                    }
-
                     p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Registered.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
-                    if (RLConfig.file().getBoolean("Settings.BungeeCord.Connect-Lobby")) {
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-                            p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Sending.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10);
-                        }, 5L);
-                        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-                            BungeecordUtils.connect(RLConfig.file().getString("Settings.BungeeCord.Lobby-Server"), p, this.rl);
-                        }, 10L);
-                    }
 
+                    this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
                 } catch (Exception ex) {
                     Bukkit.getLogger().severe("Error while hashing password: " + ex.getMessage());
                     ex.printStackTrace();

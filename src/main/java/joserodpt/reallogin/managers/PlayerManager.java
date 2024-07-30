@@ -17,7 +17,10 @@ package joserodpt.reallogin.managers;
 
 import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
+import joserodpt.reallogin.utils.BungeecordUtils;
+import joserodpt.reallogin.utils.LocationUtils;
 import joserodpt.reallogin.utils.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -75,6 +78,10 @@ public class PlayerManager {
         }
 
         this.pin.put(p.getUniqueId(), "");
+
+        if (RLConfig.file().contains("Locations.TPLogin")) {
+            p.teleport(LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPLogin")));
+        }
     }
 
     public boolean hasPlayerInventory(UUID uuid) {
@@ -103,8 +110,23 @@ public class PlayerManager {
 
     public void loginGrantedForPlayer(UUID uniqueId) {
         this.pin.remove(uniqueId);
+
         if (RLConfig.file().getLong("Settings.Max-Session-Time") > 0)
             this.sessionTime.put(uniqueId, RLConfig.file().getLong("Settings.Max-Session-Time"));
+
+        Player p = Bukkit.getPlayer(uniqueId);
+        if (RLConfig.file().contains("Locations.TPAfterLogin")) {
+            p.teleport(LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPAfterLogin")));
+        }
+
+        if (this.hasPlayerInventory(p.getUniqueId())) {
+            p.getInventory().setContents(this.getPlayerInventory(p.getUniqueId()));
+        }
+
+        if (RLConfig.file().getBoolean("Settings.BungeeCord.Connect-Lobby")) {
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Sending.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Sending.Down")), 7, 50, 10), 5L);
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> BungeecordUtils.connect(RLConfig.file().getString("Settings.BungeeCord.Lobby-Server"), p, this.rl), 10L);
+        }
     }
 
     public boolean doesPlayerHaveSession(UUID uniqueId) {
