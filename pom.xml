@@ -6,7 +6,7 @@
 
     <groupId>joserodpt.reallogin</groupId>
     <artifactId>RealLogin</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>RealLogin</name>
@@ -24,8 +24,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -110,6 +110,13 @@
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-jdbc</artifactId>
             <version>6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>joserodpt.realpermissions</groupId>
+            <artifactId>realpermissions</artifactId>
+            <version>0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/RealPermissions.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
