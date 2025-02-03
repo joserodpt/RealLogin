@@ -15,10 +15,14 @@ package joserodpt.reallogin;
  * @link https://github.com/joserodpt/RealLogin
  */
 
+import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
+import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey;
+import dev.triumphteam.cmd.core.message.MessageKey;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLPlayerLegacyConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
 import joserodpt.reallogin.managers.DatabaseManager;
+import joserodpt.reallogin.managers.GUIManager;
 import joserodpt.reallogin.managers.PlayerManager;
 import joserodpt.reallogin.player.PlayerListener;
 import joserodpt.reallogin.utils.GUIBuilder;
@@ -26,11 +30,10 @@ import joserodpt.reallogin.utils.Text;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
-import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import joserodpt.reallogin.managers.GUIManager;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -79,12 +82,12 @@ public final class RealLogin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(GUIBuilder.getListener(), this);
 
-        CommandManager commandManager = new CommandManager(this);
-        commandManager.getMessageHandler().register("cmd.no.console", sender -> Text.send(sender,"&cThis command can't be used in the console!", true));
-        commandManager.getMessageHandler().register("cmd.no.exists", sender -> Text.send(sender,"&cThe command you're trying to use doesn't exist!", true));
-        commandManager.getMessageHandler().register("cmd.no.permission", sender -> Text.send(sender,"&cYou don't have permission to execute this command!", true));
-        commandManager.getMessageHandler().register("cmd.wrong.usage", sender -> Text.send(sender,"&cWrong usage for the command!", true));
-        commandManager.register(new RealLoginCommand(this));
+        BukkitCommandManager<CommandSender> commandManager = BukkitCommandManager.create(this);
+
+        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender,"&cThe command you're trying to use doesn't exist!", true));
+        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender,"&cYou don't have permission to execute this command!", true));
+        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender,"&cWrong usage for the command!", true));
+        commandManager.registerCommand(new RealLoginCommand(this));
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
             //register RealMines permissions onto RealPermissions
@@ -107,9 +110,7 @@ public final class RealLogin extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Disabling RealLogin...");
         if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId()));
-            });
+            Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId())));
         }
         playerManager.stopTickTask();
         getLogger().info("RealLogin disabled.");

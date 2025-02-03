@@ -15,27 +15,29 @@ package joserodpt.reallogin;
  * @link https://github.com/joserodpt/RealLogin
  */
 
+import dev.triumphteam.cmd.bukkit.annotation.Permission;
+import dev.triumphteam.cmd.core.BaseCommand;
+import dev.triumphteam.cmd.core.annotation.Command;
+import dev.triumphteam.cmd.core.annotation.Default;
+import dev.triumphteam.cmd.core.annotation.SubCommand;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
 import joserodpt.reallogin.player.PlayerLoginRow;
 import joserodpt.reallogin.utils.LocationUtils;
-import me.mattstudios.mf.annotations.*;
-import me.mattstudios.mf.base.CommandBase;
+import joserodpt.reallogin.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import joserodpt.reallogin.utils.Text;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@me.mattstudios.mf.annotations.Command("reallogin")
-@Alias({"rlogin", "rlog"})
-public class RealLoginCommand extends CommandBase {
+@Command(value = "reallogin", alias = "rl")
+public class RealLoginCommand extends BaseCommand {
 
-    private RealLogin rl;
+    private final RealLogin rl;
     public RealLoginCommand(RealLogin rl) {
         this.rl = rl;
     }
@@ -138,12 +140,15 @@ public class RealLoginCommand extends CommandBase {
         Text.send(commandSender, "&aDeleted the after login location.", true);
     }
 
-    @SubCommand("info")
-    @Alias("inf")
+    @SubCommand(value = "info", alias = "inf")
     @Permission("reallogin.admin")
-    @Completion("#players")
     @SuppressWarnings("unused")
     public void infocmd(CommandSender commandSender, String name) {
+        if (name == null) {
+            Text.send(commandSender, "&cInvalid usage: /rl info <name>", true);
+            return;
+        }
+
         PlayerDataRow pdo = rl.getDatabaseManager().getPlayerData(name);
         if (pdo == null) {
             Text.send(commandSender, "&cPlayer not found.", true);
@@ -176,8 +181,7 @@ public class RealLoginCommand extends CommandBase {
         }
     }
 
-    @SubCommand("reload")
-    @Alias("rl")
+    @SubCommand(value = "reload", alias = "rl")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
     public void reloadcmd(CommandSender commandSender) {
@@ -188,12 +192,15 @@ public class RealLoginCommand extends CommandBase {
         Text.send(commandSender, "&aReloaded.", true);
     }
 
-    @SubCommand("deletepin")
-    @Alias("delpin")
+    @SubCommand(value = "deletepin", alias = "delpin")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
-    @WrongUsage("&cUsage: /reallogin deletepin <player>")
     public void deletepincmd(CommandSender commandSender, final String name) {
+        if (name == null) {
+            Text.send(commandSender, "&cInvalid usage: /rl deletepin <name>", true);
+            return;
+        }
+
         if (rl.getDatabaseManager().isPlayerRegistered(name)) {
             rl.getDatabaseManager().deletePlayerData(name);
             Text.send(commandSender, "&fPlayer pin has been &cdeleted.", true);
@@ -205,10 +212,9 @@ public class RealLoginCommand extends CommandBase {
     @SubCommand("setpin")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
-    @WrongUsage("&cUsage: /reallogin setpin <player> <pin>")
     public void setpincmd(CommandSender commandSender, final String name, final Integer pin) {
-        if (pin == null) {
-            Text.send(commandSender, "&cInvalid PIN input.", true);
+        if (name == null || pin == null) {
+            Text.send(commandSender, "&cInvalid usage: /rl setpin <name> <pin>", true);
             return;
         }
 
