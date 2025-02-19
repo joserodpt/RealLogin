@@ -77,6 +77,13 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        if (rl.getPlayerManager().hasPlayerInventory(e.getPlayer().getUniqueId())) {
+            e.getPlayer().getInventory().setContents(rl.getPlayerManager().getPlayerInventory(e.getPlayer().getUniqueId()));
+        }
+    }
+
+    @EventHandler
     public void onWalk(PlayerMoveEvent e) {
         if (rl.getPlayerManager().isPlayerFronzen(e.getPlayer().getUniqueId())) {
             e.setCancelled(true);
