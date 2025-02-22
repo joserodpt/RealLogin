@@ -110,7 +110,11 @@ public final class RealLogin extends JavaPlugin {
     public void onDisable() {
         getLogger().info("Disabling RealLogin...");
         if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-            Bukkit.getOnlinePlayers().forEach(player -> player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId())));
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                if (playerManager.getPlayerInventory(player.getUniqueId()) == null) return;
+
+                player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId()));
+            });
         }
         playerManager.stopTickTask();
         getLogger().info("RealLogin disabled.");
