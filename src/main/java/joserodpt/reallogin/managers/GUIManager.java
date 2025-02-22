@@ -85,7 +85,12 @@ public class GUIManager {
                 Items.createItemLore(Material.OAK_DOOR, RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Description"))),
                 event -> p.kickPlayer(Text.color(Text.getPrefix() + RLConfig.file().getString("Strings.Kick-Message"))));
 
-        boolean useCustomHeads = RLConfig.file().getBoolean("Settings.Use-Custom-Heads");
+        boolean useCustomHeads = false;
+
+        try { // check if skull creation is possible (to be fixed...)
+            SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ==");
+            useCustomHeads = RLConfig.file().getBoolean("Settings.Use-Custom-Heads");
+        } catch (Exception ignored) {}
 
         gui.setItem(4, 5, useCustomHeads ? Items.renameItem(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ=="), "&6&l0", Collections.singletonList("")) :
                 Items.createItemLore(Material.BLACK_STAINED_GLASS_PANE, "&6&l0", Collections.emptyList()), event -> {
@@ -96,8 +101,9 @@ public class GUIManager {
         });
 
         // Helper method to create and set GuiItems
+        boolean finalUseCustomHeads = useCustomHeads;
         BiConsumer<Integer, String> setGuiItem = (slot, base64) -> {
-            ItemStack item = useCustomHeads
+            ItemStack item = finalUseCustomHeads
                     ? Items.renameItem(SkullCreator.itemFromBase64(base64), "&6&l" + slot, Collections.emptyList())
                     : Items.createItem(Material.BLACK_STAINED_GLASS_PANE, "&6&l" + slot);
 
