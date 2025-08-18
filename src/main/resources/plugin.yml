@@ -1,5 +1,0 @@
-main: joserodpt.reallogin.RealLogin
-name: RealLogin
-version: ${project.version}
-api-version: 1.13
-authors: [JoseGamer_PT, neziw]
