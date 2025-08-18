@@ -1,4 +1,6 @@
 package joserodpt.reallogin.common;
 
-public interface PluginBootstrap {
+public interface EntryPoint {
+
+    void printASCII();
 }

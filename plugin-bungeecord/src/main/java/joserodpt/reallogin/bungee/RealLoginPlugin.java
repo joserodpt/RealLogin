@@ -1,4 +1,6 @@
 package joserodpt.reallogin.bungee;
 
-public class BungeePlugin {
+public class RealLoginPlugin extends Java {
+
+
 }
