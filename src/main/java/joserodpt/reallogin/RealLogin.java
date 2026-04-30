@@ -93,7 +93,7 @@ public final class RealLogin extends JavaPlugin {
             //register RealMines permissions onto RealPermissions
             try {
                 RealPermissionsAPI.getInstance().getHooksAPI().addHook(new ExternalPlugin(this.getDescription().getName(), "&fReal&7Login", this.getDescription().getDescription(), Material.TRIPWIRE_HOOK, Arrays.asList(
-                        new ExternalPluginPermission("reallogin.admin", "Allow access to the main operator commands of RealMines.", Arrays.asList("rlog reload", "rlog deletepin", "rlog setpin")),
+                    new ExternalPluginPermission("reallogin.admin", "Allow access to the main operator commands of RealMines.", Arrays.asList("rlog reload", "rlog deletepin", "rlog setpin", "rlog resetpin <name>", "rlog bypass <name>")),
                         new ExternalPluginPermission("reallogin.resetpin", "Allow permission to reset the player's own pin.", Collections.singletonList("rlog resetpin"))
                 ), this.getDescription().getVersion()));
             } catch (Exception e) {

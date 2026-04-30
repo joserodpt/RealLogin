@@ -62,6 +62,34 @@ public class RealLoginCommand extends BaseCommand {
         this.rl.getGUIManager().openRegisterGUI(((Player) commandSender));
     }
 
+    @SubCommand("bypass")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void adminbypasscmd(CommandSender commandSender, final String name) {
+        if (name == null) {
+            Text.send(commandSender, "&cInvalid usage: /rl admin bypass <name>", true);
+            return;
+        }
+
+        Player target = Bukkit.getPlayerExact(name);
+        if (target == null) {
+            Text.send(commandSender, "&cPlayer must be online to bypass login.", true);
+            return;
+        }
+
+        if (!rl.getPlayerManager().isPlayerFronzen(target.getUniqueId())) {
+            Text.send(commandSender, "&ePlayer is not currently waiting for login.", true);
+            return;
+        }
+
+        target.closeInventory();
+        target.setInvulnerable(false);
+        rl.getPlayerManager().loginGrantedForPlayer(target.getUniqueId());
+
+        Text.send(commandSender, "&fLogin bypass granted for &a" + target.getName() + "&f.", true);
+        Text.send(target, "&aYour login was bypassed by an administrator.", true);
+    }
+
     @SubCommand("settplogin")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
