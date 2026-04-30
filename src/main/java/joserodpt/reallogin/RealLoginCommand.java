@@ -86,8 +86,11 @@ public class RealLoginCommand extends BaseCommand {
         target.closeInventory();
         target.setInvulnerable(false);
 
-        Text.send(commandSender, "&fLogin bypass granted for &a" + target.getName() + "&f.", true);
-        Text.send(target, "&aYour login was bypassed by an administrator.", true);
+        String bypassGranted = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Granted");
+        String bypassTarget = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Target");
+
+        Text.send(commandSender, bypassGranted.replace("%player%", target.getName()), true);
+        Text.send(target, bypassTarget, true);
     }
 
     @SubCommand("settplogin")

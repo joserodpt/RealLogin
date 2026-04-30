@@ -35,3 +35,7 @@ Strings:
     Sending:
       Up: "&6&lConnecting...."
       Down: "&eto lobby server."
+  Messages:
+    Admin:
+      Bypass-Granted: "&fLogin bypass granted for &a%player%&f."
+      Bypass-Target: "&aYour login was bypassed by an administrator."
