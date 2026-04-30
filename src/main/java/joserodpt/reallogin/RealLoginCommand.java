@@ -82,9 +82,9 @@ public class RealLoginCommand extends BaseCommand {
             return;
         }
 
+        rl.getPlayerManager().loginGrantedForPlayer(target.getUniqueId());
         target.closeInventory();
         target.setInvulnerable(false);
-        rl.getPlayerManager().loginGrantedForPlayer(target.getUniqueId());
 
         Text.send(commandSender, "&fLogin bypass granted for &a" + target.getName() + "&f.", true);
         Text.send(target, "&aYour login was bypassed by an administrator.", true);

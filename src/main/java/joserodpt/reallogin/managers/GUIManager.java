@@ -15,7 +15,6 @@ package joserodpt.reallogin.managers;
  * @link https://github.com/joserodpt/RealLogin
  */
 
-import dev.dbassett.skullcreator.SkullCreator;
 import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
@@ -29,14 +28,27 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GUIManager {
+
+    private static final String DEFAULT_HEAD_TEXTURE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ==";
+    private static final Pattern TEXTURE_URL_PATTERN = Pattern.compile("\\\"url\\\":\\\"([^\\\"]+)\\\"");
 
     private final RealLogin rl;
 
@@ -51,7 +63,11 @@ public class GUIManager {
                 Items.createItemLore(Material.EMERALD, RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))),
                 event -> confirmAction(event.getClick(), p, this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), guiBuilder));
 
-        guiBuilder.setCloseAction(event -> openRegisterGUI(p));
+        guiBuilder.setCloseAction(event -> {
+            if (!this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
+                openRegisterGUI(p);
+            }
+        });
 
         commonLoginRegister(p, guiBuilder);
     }
@@ -60,7 +76,11 @@ public class GUIManager {
         GUIBuilder guiBuilder = new GUIBuilder(Text.color(RLConfig.file().getString("Strings.GUI.Login")), 4);
 
         guiBuilder.setItem(2, 8, Items.createItemLore(Material.LAVA_BUCKET, RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Description"))), event -> removeNumber(p, guiBuilder));
-        guiBuilder.setCloseAction(event -> openLoginGUI(p));
+        guiBuilder.setCloseAction(event -> {
+            if (!this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
+                openLoginGUI(p);
+            }
+        });
 
         commonLoginRegister(p, guiBuilder);
     }
@@ -87,12 +107,12 @@ public class GUIManager {
 
         boolean useCustomHeads = false;
 
-        try { // check if skull creation is possible (to be fixed...)
-            SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ==");
+        try {
+            createCustomHead(DEFAULT_HEAD_TEXTURE);
             useCustomHeads = RLConfig.file().getBoolean("Settings.Use-Custom-Heads");
         } catch (Exception ignored) {}
 
-        gui.setItem(4, 5, useCustomHeads ? Items.renameItem(SkullCreator.itemFromBase64("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMGViZTdlNTIxNTE2OWE2OTlhY2M2Y2VmYTdiNzNmZGIxMDhkYjg3YmI2ZGFlMjg0OWZiZTI0NzE0YjI3In19fQ=="), "&6&l0", Collections.singletonList("")) :
+        gui.setItem(4, 5, useCustomHeads ? Items.renameItem(createCustomHead(DEFAULT_HEAD_TEXTURE), "&6&l0", Collections.singletonList("")) :
                 Items.createItemLore(Material.BLACK_STAINED_GLASS_PANE, "&6&l0", Collections.emptyList()), event -> {
             if (event.getClick() == ClickType.DROP)
                 removeNumber(p, gui);
@@ -104,7 +124,7 @@ public class GUIManager {
         boolean finalUseCustomHeads = useCustomHeads;
         BiConsumer<Integer, String> setGuiItem = (slot, base64) -> {
             ItemStack item = finalUseCustomHeads
-                    ? Items.renameItem(SkullCreator.itemFromBase64(base64), "&6&l" + slot, Collections.emptyList())
+                    ? Items.renameItem(createCustomHead(base64), "&6&l" + slot, Collections.emptyList())
                     : Items.createItem(Material.BLACK_STAINED_GLASS_PANE, "&6&l" + slot);
 
             gui.setItem((slot - 1) / 3 + 1, (slot - 1) % 3 + 4, item, event -> {
@@ -132,6 +152,75 @@ public class GUIManager {
         for (int i = 1; i <= 9; ++i) {
             setGuiItem.accept(i, customHeads.get(i));
         }
+    }
+
+    private ItemStack createCustomHead(String textureBase64) {
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+
+        try {
+            ItemMeta itemMeta = head.getItemMeta();
+            if (!(itemMeta instanceof SkullMeta)) {
+                return head;
+            }
+
+            SkullMeta skullMeta = (SkullMeta) itemMeta;
+            Object profile = createPlayerProfile();
+            URL textureUrl = extractTextureUrl(textureBase64);
+
+            if (textureUrl == null) {
+                return head;
+            }
+
+            Method getTextures = profile.getClass().getMethod("getTextures");
+            Object textures = getTextures.invoke(profile);
+            Method setSkin = textures.getClass().getMethod("setSkin", URL.class);
+            setSkin.invoke(textures, textureUrl);
+
+            Class<?> playerProfileClass = Class.forName("org.bukkit.profile.PlayerProfile");
+
+            try {
+                Method setPlayerProfile = SkullMeta.class.getMethod("setPlayerProfile", playerProfileClass);
+                setPlayerProfile.setAccessible(true);
+                setPlayerProfile.invoke(skullMeta, profile);
+            } catch (NoSuchMethodException ignored) {
+                try {
+                    Method setOwnerProfile = SkullMeta.class.getMethod("setOwnerProfile", playerProfileClass);
+                    setOwnerProfile.setAccessible(true);
+                    setOwnerProfile.invoke(skullMeta, profile);
+                } catch (NoSuchMethodException ignoredToo) {
+                    Field profileField = skullMeta.getClass().getDeclaredField("profile");
+                    profileField.setAccessible(true);
+                    profileField.set(skullMeta, profile);
+                }
+            }
+
+            head.setItemMeta(skullMeta);
+        } catch (Exception e) {
+            rl.getLogger().warning("Could not create custom head texture: " + e.getMessage());
+        }
+
+        return head;
+    }
+
+    private Object createPlayerProfile() throws ReflectiveOperationException {
+        try {
+            Method createPlayerProfile = Bukkit.class.getMethod("createPlayerProfile", UUID.class, String.class);
+            return createPlayerProfile.invoke(null, UUID.randomUUID(), null);
+        } catch (NoSuchMethodException ignored) {
+            Method createPlayerProfile = Bukkit.class.getMethod("createPlayerProfile", UUID.class);
+            return createPlayerProfile.invoke(null, UUID.randomUUID());
+        }
+    }
+
+    private URL extractTextureUrl(String textureBase64) throws Exception {
+        String decodedTexture = new String(Base64.getDecoder().decode(textureBase64), StandardCharsets.UTF_8);
+        Matcher matcher = TEXTURE_URL_PATTERN.matcher(decodedTexture);
+
+        if (!matcher.find()) {
+            return null;
+        }
+
+        return new URL(matcher.group(1));
     }
 
     public void removeNumber(Player p, GUIBuilder g) {

@@ -28,6 +28,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerManager {
@@ -42,6 +44,7 @@ public class PlayerManager {
     private final Map<UUID, String> pin = new HashMap<>();
     private final Map<UUID, ItemStack[]> inv = new HashMap<>();
     private final Map<UUID, Long> sessionTime = new HashMap<>();
+    private final Set<UUID> authenticated = new HashSet<>();
 
     private BukkitTask task;
 
@@ -73,6 +76,8 @@ public class PlayerManager {
     }
 
     public void setupPlayerLogin(Player p) {
+        this.authenticated.remove(p.getUniqueId());
+
         if (rl.getPlayerManager().doesPlayerHaveSession(p.getUniqueId())) {
             return;
         }
@@ -108,8 +113,13 @@ public class PlayerManager {
         this.pin.put(uniqueId, currentPIN);
     }
 
+    public boolean isPlayerAuthenticated(UUID uniqueId) {
+        return this.authenticated.contains(uniqueId);
+    }
+
     public void loginGrantedForPlayer(UUID uniqueId) {
         this.pin.remove(uniqueId);
+        this.authenticated.add(uniqueId);
 
         if (RLConfig.file().getLong("Settings.Max-Session-Time") > 0)
             this.sessionTime.put(uniqueId, RLConfig.file().getLong("Settings.Max-Session-Time"));

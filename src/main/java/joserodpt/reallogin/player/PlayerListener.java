@@ -63,6 +63,10 @@ public class PlayerListener implements Listener {
         }
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
+            if (rl.getPlayerManager().isPlayerAuthenticated(e.getPlayer().getUniqueId())) {
+                return;
+            }
+
             if (rl.getDatabaseManager().isPlayerRegistered(e.getPlayer())) {
                 rl.getGUIManager().openLoginGUI(e.getPlayer());
             } else {
