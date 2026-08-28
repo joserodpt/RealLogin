@@ -11,7 +11,7 @@ package joserodpt.reallogin;
  *                                  |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues © 2020-2024
+ * @author José Rodrigues © 2020-2026
  * @link https://github.com/joserodpt/RealLogin
  */
 
