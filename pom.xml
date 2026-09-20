@@ -13,8 +13,11 @@
 
     <description>Login plugin with PIN and GUI interaction</description>
     <properties>
-        <java.version>1.8</java.version>
+        <maven.compiler.release>16</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- JitPack coordinate for joserodpt/RealPermissions, matching RealMines. Swap for
+             a tag (e.g. v0.4.4) once the upstream repo has one; commit hashes are stable too. -->
+        <realpermissions.version>1e7015a05e</realpermissions.version>
     </properties>
 
     <build>
@@ -22,10 +25,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.1</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -89,6 +91,10 @@
             <id>repo</id>
             <url>https://repo.triumphteam.dev/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -113,12 +119,13 @@
             <artifactId>ormlite-jdbc</artifactId>
             <version>6.1</version>
         </dependency>
+        <!-- Soft hook: only touched when the RealPermissions plugin is present at
+             runtime, so it stays provided and is never shaded in. -->
         <dependency>
-            <groupId>joserodpt.realpermissions</groupId>
-            <artifactId>realpermissions</artifactId>
-            <version>0.4.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/RealPermissions.jar</systemPath>
+            <groupId>com.github.joserodpt.RealPermissions</groupId>
+            <artifactId>realpermissions-api</artifactId>
+            <version>${realpermissions.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
