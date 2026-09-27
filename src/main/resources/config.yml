@@ -1,10 +1,13 @@
-Version: 2
+Version: 3
 Settings:
   Max-Pin-Length: 4
   Hide-Inventories: false
   Use-Custom-Heads: true
   Date-Format: "dd/MM/yyyy HH:mm:ss"
   Max-Session-Time: 120
+  # On servers that have dialogs (1.21.6 and up), show the settings and confirmations in dialogs.
+  # The PIN keypad stays an inventory: a dialog's text box would show the PIN as it is typed.
+  Use-Dialogs: true
   BungeeCord:
     Connect-Lobby: false
     Lobby-Server: "lobby"
@@ -39,3 +42,10 @@ Strings:
     Admin:
       Bypass-Granted: "&fLogin bypass granted for &a%player%&f."
       Bypass-Target: "&aYour login was bypassed by an administrator."
+  # Shown in dialogs, on servers that have them (1.21.6 and up).
+  Dialogs:
+    Reset-Pin:
+      Title: "&fReal&7Login &8| &fReset PIN"
+      Question: "&fReset your PIN? You will choose a new one straight away."
+      Button: "&cReset my PIN"
+    Cancel: "&7Cancel"

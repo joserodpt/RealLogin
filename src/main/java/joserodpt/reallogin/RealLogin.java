@@ -27,6 +27,7 @@ import joserodpt.reallogin.managers.PlayerManager;
 import joserodpt.reallogin.player.PlayerListener;
 import joserodpt.reallogin.utils.GUIBuilder;
 import joserodpt.reallogin.utils.Text;
+import joserodpt.realutils.dialog.Dialogs;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
@@ -81,6 +82,8 @@ public final class RealLogin extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(GUIBuilder.getListener(), this);
+        //the settings and confirmations are asked in dialogs on servers that have them
+        Dialogs.setup(this, () -> RLConfig.file().getBoolean("Settings.Use-Dialogs", true));
 
         BukkitCommandManager<CommandSender> commandManager = BukkitCommandManager.create(this);
 
@@ -108,6 +111,7 @@ public final class RealLogin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Dialogs.shutdown();
         getLogger().info("Disabling RealLogin...");
         if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
             Bukkit.getOnlinePlayers().forEach(player -> {

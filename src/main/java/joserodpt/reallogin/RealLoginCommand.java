@@ -26,6 +26,7 @@ import joserodpt.reallogin.player.PlayerDataRow;
 import joserodpt.reallogin.player.PlayerLoginRow;
 import joserodpt.reallogin.utils.LocationUtils;
 import joserodpt.reallogin.utils.Text;
+import joserodpt.realutils.dialog.Dialogs;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -49,6 +50,17 @@ public class RealLoginCommand extends BaseCommand {
                 "&fReal&7Login &6v" + this.rl.getDescription().getVersion(), false);
     }
 
+    @SubCommand("settings")
+    @Permission("reallogin.admin")
+    @SuppressWarnings("unused")
+    public void settingscmd(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.", true);
+            return;
+        }
+        ConfigEditor.open((Player) commandSender, this.rl);
+    }
+
     @SubCommand("resetpin")
     @Permission("reallogin.resetpin")
     @SuppressWarnings("unused")
@@ -58,8 +70,18 @@ public class RealLoginCommand extends BaseCommand {
             return;
         }
 
-        this.rl.getDatabaseManager().deletePlayerData(((Player) commandSender));
-        this.rl.getGUIManager().openRegisterGUI(((Player) commandSender));
+        final Player p = (Player) commandSender;
+        final Runnable reset = () -> {
+            this.rl.getDatabaseManager().deletePlayerData(p);
+            this.rl.getGUIManager().openRegisterGUI(p);
+        };
+        //asked first where the server has dialogs; elsewhere the command resets straight away
+        if (!Dialogs.confirm(p, RLConfig.file().getString("Strings.Dialogs.Reset-Pin.Title"),
+                RLConfig.file().getString("Strings.Dialogs.Reset-Pin.Question"),
+                RLConfig.file().getString("Strings.Dialogs.Reset-Pin.Button"),
+                RLConfig.file().getString("Strings.Dialogs.Cancel"), reset, null)) {
+            reset.run();
+        }
     }
 
     @SubCommand("bypass")
@@ -157,18 +179,38 @@ public class RealLoginCommand extends BaseCommand {
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
     public void deltplogin(CommandSender commandSender) {
-        RLConfig.file().remove("Locations.TPLogin");
-        RLConfig.save();
-        Text.send(commandSender, "&aDeleted the login location.", true);
+        final Runnable delete = () -> {
+            RLConfig.file().remove("Locations.TPLogin");
+            RLConfig.save();
+            Text.send(commandSender, "&aDeleted the login location.", true);
+        };
+        if (!confirm(commandSender, "&fDelete the login location? Players stay where they join instead.", delete)) {
+            delete.run();
+        }
     }
 
     @SubCommand("deltpafterlogin")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
     public void deltpafterlogin(CommandSender commandSender) {
-        RLConfig.file().remove("Locations.TPAfterLogin");
-        RLConfig.save();
-        Text.send(commandSender, "&aDeleted the after login location.", true);
+        final Runnable delete = () -> {
+            RLConfig.file().remove("Locations.TPAfterLogin");
+            RLConfig.save();
+            Text.send(commandSender, "&aDeleted the after login location.", true);
+        };
+        if (!confirm(commandSender, "&fDelete the after login location? Players stay where they log in instead.", delete)) {
+            delete.run();
+        }
+    }
+
+    /**
+     * An admin's yes-or-no dialog before something that cannot be undone.
+     *
+     * @return false if nothing was asked - the console, or a server without dialogs - so the caller goes ahead
+     */
+    private static boolean confirm(final CommandSender sender, final String question, final Runnable confirmed) {
+        return sender instanceof Player && Dialogs.confirm((Player) sender, "&fReal&7Login &8| &fConfirm", question,
+                "&cDelete", RLConfig.file().getString("Strings.Dialogs.Cancel"), confirmed, null);
     }
 
     @SubCommand(value = "info", alias = "inf")
@@ -233,8 +275,13 @@ public class RealLoginCommand extends BaseCommand {
         }
 
         if (rl.getDatabaseManager().isPlayerRegistered(name)) {
-            rl.getDatabaseManager().deletePlayerData(name);
-            Text.send(commandSender, "&fPlayer pin has been &cdeleted.", true);
+            final Runnable delete = () -> {
+                rl.getDatabaseManager().deletePlayerData(name);
+                Text.send(commandSender, "&fPlayer pin has been &cdeleted.", true);
+            };
+            if (!confirm(commandSender, "&fDelete &b" + name + "&f's PIN? They will register a new one when they next join.", delete)) {
+                delete.run();
+            }
         } else {
             Text.send(commandSender, "&fPlayer &cnot found.", true);
         }

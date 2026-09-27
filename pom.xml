@@ -14,6 +14,8 @@
     <description>Login plugin with PIN and GUI interaction</description>
     <properties>
         <maven.compiler.release>16</maven.compiler.release>
+        <!-- Shared with the other Real* plugins: dialogs (1.21.6+). -->
+        <realutils.version>1.0.0</realutils.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- JitPack coordinate for joserodpt/RealPermissions, matching RealMines. Swap for
              a tag (e.g. v0.4.4) once the upstream repo has one; commit hashes are stable too. -->
@@ -44,6 +46,18 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <!-- Relocated with UniDialog, so another plugin shading either cannot clash with
+                                 ours; this also rewrites the class names RealUtils loads by name. -->
+                            <relocations>
+                                <relocation>
+                                    <pattern>joserodpt.realutils</pattern>
+                                    <shadedPattern>joserodpt.reallogin.shaded.realutils</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>io.github.projectunified.unidialog</pattern>
+                                    <shadedPattern>joserodpt.reallogin.shaded.unidialog</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>dev.dbassett:skullcreator</artifact>
@@ -98,6 +112,13 @@
     </repositories>
 
     <dependencies>
+        <!-- Dialogs, from the library the Real* plugins share. It brings UniDialog's Spigot and
+             Paper backends with it, picked between at runtime. -->
+        <dependency>
+            <groupId>com.github.joserodpt</groupId>
+            <artifactId>RealUtils</artifactId>
+            <version>${realutils.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
