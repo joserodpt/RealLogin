@@ -49,12 +49,7 @@ public class RealLoginCommand extends BaseCommand {
     @Default
     @SuppressWarnings("unused")
     public void defaultcmd(CommandSender commandSender) {
-        Text.sendRaw(commandSender,
-                "&fReal&7Login &6v" + this.rl.getDescription().getVersion());
-        if (!(commandSender instanceof Player)) {
-            Text.sendRaw(commandSender, "&7Built &6" + BuildInfo.time(this.rl));
-            Text.sendRaw(commandSender, "&7RealUtils &6" + BuildInfo.realUtilsVersion(this.rl));
-        }
+        BuildInfo.sendAbout(commandSender, this.rl, "&fReal&7Login");
     }
 
     @SubCommand("settings")
