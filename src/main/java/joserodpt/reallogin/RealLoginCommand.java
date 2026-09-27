@@ -108,6 +108,8 @@ public class RealLoginCommand extends BaseCommand {
 
         rl.getPlayerManager().loginGrantedForPlayer(target.getUniqueId());
         target.closeInventory();
+        //the keypad may be a dialog instead, which closeInventory leaves open
+        Dialogs.close(target.getUniqueId());
         target.setInvulnerable(false);
 
         String bypassGranted = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Granted");

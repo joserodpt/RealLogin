@@ -106,8 +106,9 @@ public class PlayerManager {
         return this.pin.containsKey(uuid);
     }
 
+    /** What the player has typed on the keypad so far, empty before the first key. */
     public String getPlayerPIN(UUID uniqueId) {
-        return this.pin.get(uniqueId);
+        return this.pin.getOrDefault(uniqueId, "");
     }
 
     public void setPlayerPin(UUID uniqueId, String currentPIN) {

@@ -24,7 +24,7 @@ public class RLConfig {
     private static YamlConfig config;
 
     public static void setup(final JavaPlugin rm) {
-        config = YamlConfig.of(rm, "config.yml").versioned("Version").ignoring("2", "Locations").load();
+        config = YamlConfig.of(rm, "config.yml").versioned("Version").ignoring("2", "Locations").ignoring("3", "Locations").load();
     }
 
     public static YamlDocument file() {
