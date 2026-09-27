@@ -33,10 +33,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class DatabaseManager {
@@ -106,6 +109,21 @@ public class DatabaseManager {
                 return null;
             }
         });
+    }
+
+    /**
+     * Names to suggest for commands that take a player: everyone online, then everyone registered.
+     * Read from the cache, so it is cheap enough to run on every tab press.
+     */
+    public List<String> getKnownPlayerNames() {
+        Set<String> names = new LinkedHashSet<>();
+        Bukkit.getOnlinePlayers().forEach(p -> names.add(p.getName()));
+        for (PlayerDataRow playerData : playerDataCache.values().toArray(new PlayerDataRow[0])) {
+            if (playerData != null && playerData.getName() != null) {
+                names.add(playerData.getName());
+            }
+        }
+        return new ArrayList<>(names);
     }
 
     public PlayerDataRow getPlayerData(String name) {

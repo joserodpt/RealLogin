@@ -41,7 +41,7 @@ public final class ConfigEditor {
                 });
         settings.category("&eGeneral", "&7PINs, sessions and the keypad")
                 .slider("Settings.Max-Pin-Length", "Longest a PIN can be", 2, 16, 1)
-                .slider("Settings.Max-Session-Time", "Seconds a player stays logged in after leaving", 0, 3600, 30)
+                .slider("Settings.Max-Session-Time", "Session timeout length", 0, 3600, 30)
                 .note("0 turns sessions off")
                 .toggle("Settings.Hide-Inventories", "Hide inventories until logged in")
                 .toggle("Settings.Use-Custom-Heads", "Number heads on the keypad")

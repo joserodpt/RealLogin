@@ -20,6 +20,7 @@ import dev.triumphteam.cmd.core.BaseCommand;
 import dev.triumphteam.cmd.core.annotation.Command;
 import dev.triumphteam.cmd.core.annotation.Default;
 import dev.triumphteam.cmd.core.annotation.SubCommand;
+import dev.triumphteam.cmd.core.annotation.Suggestion;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
@@ -217,7 +218,7 @@ public class RealLoginCommand extends BaseCommand {
     @SubCommand(value = "info", alias = "inf")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
-    public void infocmd(CommandSender commandSender, String name) {
+    public void infocmd(CommandSender commandSender, @Suggestion("#players") String name) {
         if (name == null) {
             Text.send(commandSender, "&cInvalid usage: /rl info <name>");
             return;

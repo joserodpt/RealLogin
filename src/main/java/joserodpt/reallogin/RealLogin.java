@@ -18,6 +18,7 @@ package joserodpt.reallogin;
 import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
 import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey;
 import dev.triumphteam.cmd.core.message.MessageKey;
+import dev.triumphteam.cmd.core.suggestion.SuggestionKey;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLPlayerLegacyConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
@@ -92,6 +93,7 @@ public final class RealLogin extends JavaPlugin {
         commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender,"&cThe command you're trying to use doesn't exist!"));
         commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender,"&cYou don't have permission to execute this command!"));
         commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender,"&cWrong usage for the command!"));
+        commandManager.registerSuggestion(SuggestionKey.of("#players"), (sender, context) -> databaseManager.getKnownPlayerNames());
         commandManager.registerCommand(new RealLoginCommand(this));
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
