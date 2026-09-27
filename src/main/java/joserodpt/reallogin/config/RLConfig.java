@@ -16,54 +16,26 @@ package joserodpt.reallogin.config;
  */
 
 import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
+import joserodpt.realutils.config.YamlConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+public class RLConfig {
 
-public class RLConfig implements Listener {
-
-    private static String name = "config.yml";
-
-    private static YamlDocument document;
+    private static YamlConfig config;
 
     public static void setup(final JavaPlugin rm) {
-        try {
-            document = YamlDocument.create(new File(rm.getDataFolder(), name), rm.getResource(name),
-                    GeneralSettings.DEFAULT,
-                    LoaderSettings.builder().setAutoUpdate(true).build(),
-                    DumperSettings.DEFAULT,
-                    UpdaterSettings.builder().setVersioning(new BasicVersioning("Version")).addIgnoredRoute("2", "Locations", '.').build());
-        } catch (final IOException e) {
-            Bukkit.getLogger().severe( "Couldn't setup " + name + "!");
-            Bukkit.getLogger().severe(e.getMessage());
-        }
+        config = YamlConfig.of(rm, "config.yml").versioned("Version").ignoring("2", "Locations").load();
     }
 
     public static YamlDocument file() {
-        return document;
+        return config.file();
     }
 
     public static void save() {
-        try {
-            document.save();
-        } catch (final IOException e) {
-            Bukkit.getLogger().severe( "Couldn't save " + name + "!");
-        }
+        config.save();
     }
 
     public static void reload() {
-        try {
-            document.reload();
-        } catch (final IOException e) {
-            Bukkit.getLogger().severe( "Couldn't reload " + name + "!");
-        }
+        config.reload();
     }
 }

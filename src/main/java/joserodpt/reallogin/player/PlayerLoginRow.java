@@ -17,7 +17,7 @@ package joserodpt.reallogin.player;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import joserodpt.reallogin.utils.Text;
+import joserodpt.reallogin.utils.Format;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +66,7 @@ public class PlayerLoginRow {
 
     @NotNull
     public String getDate() {
-        return Text.formatTimestamp(date);
+        return Format.formatTimestamp(date);
     }
 
     public long getDateTimestamp() {

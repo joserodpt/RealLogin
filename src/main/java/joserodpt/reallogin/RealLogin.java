@@ -25,12 +25,13 @@ import joserodpt.reallogin.managers.DatabaseManager;
 import joserodpt.reallogin.managers.GUIManager;
 import joserodpt.reallogin.managers.PlayerManager;
 import joserodpt.reallogin.player.PlayerListener;
-import joserodpt.reallogin.utils.GUIBuilder;
-import joserodpt.reallogin.utils.Text;
+import joserodpt.realutils.RealUtils;
 import joserodpt.realutils.dialog.Dialogs;
+import joserodpt.realutils.text.Text;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -52,6 +53,8 @@ public final class RealLogin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        RealUtils.setup(this);
+        Text.prefix(() -> RLConfig.file().getString("Strings.Prefix"));
         printASCII();
         new Metrics(this, 12577);
 
@@ -81,15 +84,14 @@ public final class RealLogin extends JavaPlugin {
         guiManager = new GUIManager(this);
 
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(GUIBuilder.getListener(), this);
         //the settings and confirmations are asked in dialogs on servers that have them
         Dialogs.setup(this, () -> RLConfig.file().getBoolean("Settings.Use-Dialogs", true));
 
         BukkitCommandManager<CommandSender> commandManager = BukkitCommandManager.create(this);
 
-        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender,"&cThe command you're trying to use doesn't exist!", true));
-        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender,"&cYou don't have permission to execute this command!", true));
-        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender,"&cWrong usage for the command!", true));
+        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender,"&cThe command you're trying to use doesn't exist!"));
+        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender,"&cYou don't have permission to execute this command!"));
+        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender,"&cWrong usage for the command!"));
         commandManager.registerCommand(new RealLoginCommand(this));
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {

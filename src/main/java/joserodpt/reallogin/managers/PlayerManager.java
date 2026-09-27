@@ -18,8 +18,9 @@ package joserodpt.reallogin.managers;
 import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.utils.BungeecordUtils;
+import joserodpt.reallogin.utils.Format;
 import joserodpt.reallogin.utils.LocationUtils;
-import joserodpt.reallogin.utils.Text;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -144,6 +145,6 @@ public class PlayerManager {
     }
 
     public String getSessionTimeLeft(UUID uuid) {
-        return Text.formatTimestampTime(this.sessionTime.get(uuid) * 1000);
+        return Format.formatTimestampTime(this.sessionTime.get(uuid) * 1000);
     }
 }

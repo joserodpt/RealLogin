@@ -16,9 +16,9 @@ package joserodpt.reallogin;
  */
 
 import joserodpt.reallogin.config.RLConfig;
-import joserodpt.reallogin.utils.Text;
 import joserodpt.realutils.dialog.SettingsDialog;
 import joserodpt.realutils.dialog.SettingsStore;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -37,7 +37,7 @@ public final class ConfigEditor {
                 .onSave((player, category) -> {
                     //what /rl reload does for the session timer, so a new session length applies now
                     rl.getPlayerManager().startTickTask();
-                    Text.send(player, "&fSettings saved.", true);
+                    Text.send(player, "&fSettings saved.");
                 });
         settings.category("&eGeneral", "&7PINs, sessions and the keypad")
                 .slider("Settings.Max-Pin-Length", "Longest a PIN can be", 2, 16, 1)
@@ -60,6 +60,6 @@ public final class ConfigEditor {
                 .text("Strings.Messages.Admin.Bypass-Target", "Told to the bypassed player", 256);
 
         settings.open(p, SettingsStore.of(RLConfig.file()::get, RLConfig.file()::set, RLConfig::save),
-                () -> Text.send(p, "&fThe settings editor needs a server with dialogs (1.21.6 and up). Edit &bconfig.yml &fand use &b/rl reload &finstead.", true));
+                () -> Text.send(p, "&fThe settings editor needs a server with dialogs (1.21.6 and up). Edit &bconfig.yml &fand use &b/rl reload &finstead."));
     }
 }

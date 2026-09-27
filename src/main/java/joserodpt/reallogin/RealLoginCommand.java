@@ -24,9 +24,10 @@ import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.config.RLSQLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
 import joserodpt.reallogin.player.PlayerLoginRow;
+import joserodpt.reallogin.utils.Format;
 import joserodpt.reallogin.utils.LocationUtils;
-import joserodpt.reallogin.utils.Text;
 import joserodpt.realutils.dialog.Dialogs;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -46,8 +47,8 @@ public class RealLoginCommand extends BaseCommand {
     @Default
     @SuppressWarnings("unused")
     public void defaultcmd(CommandSender commandSender) {
-        Text.send(commandSender,
-                "&fReal&7Login &6v" + this.rl.getDescription().getVersion(), false);
+        Text.sendRaw(commandSender,
+                "&fReal&7Login &6v" + this.rl.getDescription().getVersion());
     }
 
     @SubCommand("settings")
@@ -55,7 +56,7 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void settingscmd(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
         ConfigEditor.open((Player) commandSender, this.rl);
@@ -66,7 +67,7 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void resetpincmd(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
 
@@ -89,18 +90,18 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void adminbypasscmd(CommandSender commandSender, final String name) {
         if (name == null) {
-            Text.send(commandSender, "&cInvalid usage: /rl admin bypass <name>", true);
+            Text.send(commandSender, "&cInvalid usage: /rl admin bypass <name>");
             return;
         }
 
         Player target = Bukkit.getPlayerExact(name);
         if (target == null) {
-            Text.send(commandSender, "&cPlayer must be online to bypass login.", true);
+            Text.send(commandSender, "&cPlayer must be online to bypass login.");
             return;
         }
 
         if (!rl.getPlayerManager().isPlayerFronzen(target.getUniqueId())) {
-            Text.send(commandSender, "&ePlayer is not currently waiting for login.", true);
+            Text.send(commandSender, "&ePlayer is not currently waiting for login.");
             return;
         }
 
@@ -111,8 +112,8 @@ public class RealLoginCommand extends BaseCommand {
         String bypassGranted = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Granted");
         String bypassTarget = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Target");
 
-        Text.send(commandSender, bypassGranted.replace("%player%", target.getName()), true);
-        Text.send(target, bypassTarget, true);
+        Text.send(commandSender, bypassGranted.replace("%player%", target.getName()));
+        Text.send(target, bypassTarget);
     }
 
     @SubCommand("settplogin")
@@ -120,14 +121,14 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void settplogin(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
 
         Player p = (Player) commandSender;
         RLConfig.file().set("Locations.TPLogin", LocationUtils.serialize(p.getLocation()));
         RLConfig.save();
-        Text.send(p, "&aLogin location set.", true);
+        Text.send(p, "&aLogin location set.");
     }
 
     @SubCommand("settpafterlogin")
@@ -135,14 +136,14 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void settpafterlogin(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
 
         Player p = (Player) commandSender;
         RLConfig.file().set("Locations.TPAfterLogin", LocationUtils.serialize(p.getLocation()));
         RLConfig.save();
-        Text.send(p, "&aAfter Login location set.", true);
+        Text.send(p, "&aAfter Login location set.");
     }
 
     @SubCommand("tplogin")
@@ -150,14 +151,14 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void gotptplogin(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
         Player p = (Player) commandSender;
         Location l = LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPLogin"));
 
         p.teleport(l);
-        Text.send(p, "&aTeleported to the login location.", true);
+        Text.send(p, "&aTeleported to the login location.");
     }
 
     @SubCommand("tpafterlogin")
@@ -165,14 +166,14 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void gotptpafterlogin(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, "&cOnly players can use this command.", true);
+            Text.send(commandSender, "&cOnly players can use this command.");
             return;
         }
         Player p = (Player) commandSender;
         Location l = LocationUtils.deserializeSection(RLConfig.file().getSection("Locations.TPAfterLogin"));
 
         p.teleport(l);
-        Text.send(p, "&aTeleported to the after login location.", true);
+        Text.send(p, "&aTeleported to the after login location.");
     }
 
     @SubCommand("deltplogin")
@@ -182,7 +183,7 @@ public class RealLoginCommand extends BaseCommand {
         final Runnable delete = () -> {
             RLConfig.file().remove("Locations.TPLogin");
             RLConfig.save();
-            Text.send(commandSender, "&aDeleted the login location.", true);
+            Text.send(commandSender, "&aDeleted the login location.");
         };
         if (!confirm(commandSender, "&fDelete the login location? Players stay where they join instead.", delete)) {
             delete.run();
@@ -196,7 +197,7 @@ public class RealLoginCommand extends BaseCommand {
         final Runnable delete = () -> {
             RLConfig.file().remove("Locations.TPAfterLogin");
             RLConfig.save();
-            Text.send(commandSender, "&aDeleted the after login location.", true);
+            Text.send(commandSender, "&aDeleted the after login location.");
         };
         if (!confirm(commandSender, "&fDelete the after login location? Players stay where they log in instead.", delete)) {
             delete.run();
@@ -218,39 +219,39 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void infocmd(CommandSender commandSender, String name) {
         if (name == null) {
-            Text.send(commandSender, "&cInvalid usage: /rl info <name>", true);
+            Text.send(commandSender, "&cInvalid usage: /rl info <name>");
             return;
         }
 
         PlayerDataRow pdo = rl.getDatabaseManager().getPlayerData(name);
         if (pdo == null) {
-            Text.send(commandSender, "&cPlayer not found.", true);
+            Text.send(commandSender, "&cPlayer not found.");
             return;
         }
 
-        Text.send(commandSender, "&fInformation for &b" + name, true);
-        Text.send(commandSender, " > &fLocale: &a" + pdo.getLocale(), false);
+        Text.send(commandSender, "&fInformation for &b" + name);
+        Text.sendRaw(commandSender, " > &fLocale: &a" + pdo.getLocale());
 
         boolean hasTimeSession = rl.getPlayerManager().doesPlayerHaveSession(pdo.getUUID());
 
-        Text.send(commandSender, " > &fHas Time Session: " + (hasTimeSession ? "&aTrue" : "&cFalse"), false);
+        Text.sendRaw(commandSender, " > &fHas Time Session: " + (hasTimeSession ? "&aTrue" : "&cFalse"));
         if (hasTimeSession) {
-            Text.send(commandSender, "   &fTime Left: &a" + rl.getPlayerManager().getSessionTimeLeft(pdo.getUUID()), false);
+            Text.sendRaw(commandSender, "   &fTime Left: &a" + rl.getPlayerManager().getSessionTimeLeft(pdo.getUUID()));
         }
 
         List<PlayerLoginRow> logins = rl.getDatabaseManager().getPlayerLogins(name);
 
-        Text.send(commandSender, " > &fLogin count: &a" + logins.size(), false);
-        Text.send(commandSender, " > &fLast 10 logins:", false);
+        Text.sendRaw(commandSender, " > &fLogin count: &a" + logins.size());
+        Text.sendRaw(commandSender, " > &fLast 10 logins:");
         for (int i = 0; i <= 10 && i < logins.size(); ++i) {
             PlayerLoginRow plr = logins.get(i);
-            Text.send(commandSender, "   &f" + (i + 1) + ". &a" + plr.getDate() + " &ffrom &a" + plr.getIP() + " &e(" + Text.diffTimeStampToNow(plr.getDateTimestamp()) + " ago)", false);
+            Text.sendRaw(commandSender, "   &f" + (i + 1) + ". &a" + plr.getDate() + " &ffrom &a" + plr.getIP() + " &e(" + Format.diffTimeStampToNow(plr.getDateTimestamp()) + " ago)");
         }
 
-        Text.send(commandSender, " > &fLast 10 Recorded IPs:", false);
+        Text.sendRaw(commandSender, " > &fLast 10 Recorded IPs:");
         List<String> ips = logins.stream().map(PlayerLoginRow::getIP).distinct().collect(Collectors.toList());
         for (int i = 0; i < 10 && i < ips.size(); ++i) {
-            Text.send(commandSender, "   &f" + (i+1) + ". &a" + ips.get(i), false);
+            Text.sendRaw(commandSender, "   &f" + (i+1) + ". &a" + ips.get(i));
         }
     }
 
@@ -262,7 +263,7 @@ public class RealLoginCommand extends BaseCommand {
         rl.getPlayerManager().startTickTask();
         RLSQLConfig.reload();
 
-        Text.send(commandSender, "&aReloaded.", true);
+        Text.send(commandSender, "&aReloaded.");
     }
 
     @SubCommand(value = "deletepin", alias = "delpin")
@@ -270,20 +271,20 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void deletepincmd(CommandSender commandSender, final String name) {
         if (name == null) {
-            Text.send(commandSender, "&cInvalid usage: /rl deletepin <name>", true);
+            Text.send(commandSender, "&cInvalid usage: /rl deletepin <name>");
             return;
         }
 
         if (rl.getDatabaseManager().isPlayerRegistered(name)) {
             final Runnable delete = () -> {
                 rl.getDatabaseManager().deletePlayerData(name);
-                Text.send(commandSender, "&fPlayer pin has been &cdeleted.", true);
+                Text.send(commandSender, "&fPlayer pin has been &cdeleted.");
             };
             if (!confirm(commandSender, "&fDelete &b" + name + "&f's PIN? They will register a new one when they next join.", delete)) {
                 delete.run();
             }
         } else {
-            Text.send(commandSender, "&fPlayer &cnot found.", true);
+            Text.send(commandSender, "&fPlayer &cnot found.");
         }
     }
 
@@ -292,16 +293,16 @@ public class RealLoginCommand extends BaseCommand {
     @SuppressWarnings("unused")
     public void setpincmd(CommandSender commandSender, final String name, final Integer pin) {
         if (name == null || pin == null) {
-            Text.send(commandSender, "&cInvalid usage: /rl setpin <name> <pin>", true);
+            Text.send(commandSender, "&cInvalid usage: /rl setpin <name> <pin>");
             return;
         }
 
         if (rl.getDatabaseManager().isPlayerRegistered(name)) {
             rl.getDatabaseManager().savePlayerData(new PlayerDataRow(Bukkit.getPlayer(name), pin.toString()), true);
-            Text.send(commandSender, "&fPlayer PIN is now: &a" + pin, true);
+            Text.send(commandSender, "&fPlayer PIN is now: &a" + pin);
         } else {
-            Text.send(commandSender, "&fPlayer &cnot found.", true);
+            Text.send(commandSender, "&fPlayer &cnot found.");
         }
-        Text.send(commandSender, "&fPlayer PIN is now: &a" + pin, true);
+        Text.send(commandSender, "&fPlayer PIN is now: &a" + pin);
     }
 }

@@ -16,37 +16,22 @@ package joserodpt.reallogin.config;
  */
 
 import dev.dejvokep.boostedyaml.YamlDocument;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
+import joserodpt.realutils.config.YamlConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+public class RLSQLConfig {
 
-public class RLSQLConfig implements Listener {
-
-    private static String name = "sql.yml";
-
-    private static YamlDocument document;
+    private static YamlConfig config;
 
     public static void setup(final JavaPlugin rm) {
-        try {
-            document = YamlDocument.create(new File(rm.getDataFolder(), name), rm.getResource(name));
-        } catch (final IOException e) {
-            Bukkit.getLogger().severe( "Couldn't setup " + name + "!");
-            Bukkit.getLogger().severe(e.getMessage());
-        }
+        config = YamlConfig.of(rm, "sql.yml").load();
     }
 
     public static YamlDocument file() {
-        return document;
+        return config.file();
     }
 
     public static void reload() {
-        try {
-            document.reload();
-        } catch (final IOException e) {
-            Bukkit.getLogger().severe( "Couldn't reload " + name + "!");
-        }
+        config.reload();
     }
 }

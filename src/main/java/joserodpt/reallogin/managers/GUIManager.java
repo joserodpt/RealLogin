@@ -18,10 +18,10 @@ package joserodpt.reallogin.managers;
 import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
-import joserodpt.reallogin.utils.GUIBuilder;
-import joserodpt.reallogin.utils.Items;
 import joserodpt.reallogin.utils.PBKDF2;
-import joserodpt.reallogin.utils.Text;
+import joserodpt.realutils.gui.GUIBuilder;
+import joserodpt.realutils.item.Items;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -57,10 +57,11 @@ public class GUIManager {
     }
 
     public void openRegisterGUI(Player p) {
-        GUIBuilder guiBuilder = new GUIBuilder(Text.color(RLConfig.file().getString("Strings.GUI.Register")), 4);
+        GUIBuilder guiBuilder = new GUIBuilder(RLConfig.file().getString("Strings.GUI.Register"), 4 * 9, p.getUniqueId());
 
-        guiBuilder.setItem(2, 8,
-                Items.createItemLore(Material.EMERALD, RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))),
+        guiBuilder.setItem(
+                Items.createItem(Material.EMERALD, 1, RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Description"))),
+                GUIBuilder.slot(2, 8),
                 event -> confirmAction(event.getClick(), p, this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), guiBuilder));
 
         guiBuilder.setCloseAction(event -> {
@@ -73,9 +74,9 @@ public class GUIManager {
     }
 
     public void openLoginGUI(Player p) {
-        GUIBuilder guiBuilder = new GUIBuilder(Text.color(RLConfig.file().getString("Strings.GUI.Login")), 4);
+        GUIBuilder guiBuilder = new GUIBuilder(RLConfig.file().getString("Strings.GUI.Login"), 4 * 9, p.getUniqueId());
 
-        guiBuilder.setItem(2, 8, Items.createItemLore(Material.LAVA_BUCKET, RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Description"))), event -> removeNumber(p, guiBuilder));
+        guiBuilder.setItem(Items.createItem(Material.LAVA_BUCKET, 1, RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Description"))), GUIBuilder.slot(2, 8), event -> removeNumber(p, guiBuilder));
         guiBuilder.setCloseAction(event -> {
             if (!this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
                 openLoginGUI(p);
@@ -94,15 +95,19 @@ public class GUIManager {
         guiBuilder.setDefaultClickAction(event -> event.setCancelled(true));
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-            guiBuilder.open(p);
+            //not for a player who left in the meantime, nor one asleep, as before
+            if (p.isOnline() && !p.isSleeping()) {
+                guiBuilder.openInventory(p);
+            }
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
         }, 5L);
     }
 
     public void setPinItems(GUIBuilder gui, Player p) {
         //leave server button
-        gui.setItem(2, 2,
-                Items.createItemLore(Material.OAK_DOOR, RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Description"))),
+        gui.setItem(
+                Items.createItem(Material.OAK_DOOR, 1, RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Description"))),
+                GUIBuilder.slot(2, 2),
                 event -> p.kickPlayer(Text.color(Text.getPrefix() + RLConfig.file().getString("Strings.Kick-Message"))));
 
         boolean useCustomHeads = false;
@@ -112,8 +117,8 @@ public class GUIManager {
             useCustomHeads = RLConfig.file().getBoolean("Settings.Use-Custom-Heads");
         } catch (Exception ignored) {}
 
-        gui.setItem(4, 5, useCustomHeads ? Items.renameItem(createCustomHead(DEFAULT_HEAD_TEXTURE), "&6&l0", Collections.singletonList("")) :
-                Items.createItemLore(Material.BLACK_STAINED_GLASS_PANE, "&6&l0", Collections.emptyList()), event -> {
+        gui.setItem(useCustomHeads ? Items.renameItem(createCustomHead(DEFAULT_HEAD_TEXTURE), "&6&l0", Collections.singletonList("")) :
+                Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&6&l0", Collections.emptyList()), GUIBuilder.slot(4, 5), event -> {
             if (event.getClick() == ClickType.DROP)
                 removeNumber(p, gui);
             else
@@ -125,9 +130,9 @@ public class GUIManager {
         BiConsumer<Integer, String> setGuiItem = (slot, base64) -> {
             ItemStack item = finalUseCustomHeads
                     ? Items.renameItem(createCustomHead(base64), "&6&l" + slot, Collections.emptyList())
-                    : Items.createItem(Material.BLACK_STAINED_GLASS_PANE, "&6&l" + slot);
+                    : Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&6&l" + slot);
 
-            gui.setItem((slot - 1) / 3 + 1, (slot - 1) % 3 + 4, item, event -> {
+            gui.setItem(item, GUIBuilder.slot((slot - 1) / 3 + 1, (slot - 1) % 3 + 4), event -> {
                 if (event.getClick() == ClickType.DROP)
                     removeNumber(p, gui);
                 else
@@ -245,7 +250,7 @@ public class GUIManager {
 
         playerManager.setPlayerPin(p.getUniqueId(), currentPIN);
         p.playSound(p.getLocation(), sound, (float) 1, pitch);
-        g.updateTitle(Text.color(RLConfig.file().getString("Strings.GUI.PIN") + currentPIN));
+        g.updateTitle(RLConfig.file().getString("Strings.GUI.PIN") + currentPIN);
         checkPIN(p, g);
     }
 
