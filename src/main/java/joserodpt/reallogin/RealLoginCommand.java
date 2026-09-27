@@ -28,6 +28,7 @@ import joserodpt.reallogin.player.PlayerLoginRow;
 import joserodpt.reallogin.utils.Format;
 import joserodpt.reallogin.utils.LocationUtils;
 import joserodpt.realutils.dialog.Dialogs;
+import joserodpt.realutils.BuildInfo;
 import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,6 +51,10 @@ public class RealLoginCommand extends BaseCommand {
     public void defaultcmd(CommandSender commandSender) {
         Text.sendRaw(commandSender,
                 "&fReal&7Login &6v" + this.rl.getDescription().getVersion());
+        if (!(commandSender instanceof Player)) {
+            Text.sendRaw(commandSender, "&7Built &6" + BuildInfo.time(this.rl));
+            Text.sendRaw(commandSender, "&7RealUtils &6" + BuildInfo.realUtilsVersion(this.rl));
+        }
     }
 
     @SubCommand("settings")
