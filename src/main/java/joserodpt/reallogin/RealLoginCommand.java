@@ -86,6 +86,19 @@ public class RealLoginCommand extends BaseCommand {
         }
     }
 
+    @SubCommand("logout")
+    @SuppressWarnings("unused")
+    public void logoutcmd(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, "&cOnly players can use this command.");
+            return;
+        }
+
+        final Player p = (Player) commandSender;
+        this.rl.getPlayerManager().logout(p);
+        Text.send(p, RLConfig.file().getString("Strings.Messages.Logged-Out", "&fYou logged out. Enter your PIN to log back in."));
+    }
+
     @SubCommand("bypass")
     @Permission("reallogin.admin")
     @SuppressWarnings("unused")
@@ -108,8 +121,6 @@ public class RealLoginCommand extends BaseCommand {
 
         rl.getPlayerManager().loginGrantedForPlayer(target.getUniqueId());
         target.closeInventory();
-        //the keypad may be a dialog instead, which closeInventory leaves open
-        Dialogs.close(target.getUniqueId());
         target.setInvulnerable(false);
 
         String bypassGranted = RLConfig.file().getString("Strings.Messages.Admin.Bypass-Granted");

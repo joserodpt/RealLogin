@@ -45,8 +45,7 @@ public final class ConfigEditor {
                 .toggle("Settings.Hide-Inventories", "Hide inventories until logged in")
                 .toggle("Settings.Use-Custom-Heads", "Number heads on the keypad")
                 .text("Settings.Date-Format", "Date format", 64)
-                .toggle("Settings.Use-Dialogs", "Use dialogs")
-                .toggle("Settings.Dialog-Keypad", "Show the PIN keypad as a dialog").note("needs Use dialogs");
+                .toggle("Settings.Use-Dialogs", "Use dialogs").note("the keypad is always an inventory");
         settings.category("&9BungeeCord", "&7Sending players to a lobby after logging in")
                 .toggle("Settings.BungeeCord.Connect-Lobby", "Send players to the lobby server after logging in")
                 .text("Settings.BungeeCord.Lobby-Server", "Lobby server", 64);
@@ -56,6 +55,7 @@ public final class ConfigEditor {
                 .text("Strings.GUI.Login", "Login screen title", 64)
                 .text("Strings.GUI.Register", "Register screen title", 64)
                 .text("Strings.GUI.PIN", "PIN line", 64)
+                .text("Strings.Messages.Logged-Out", "Told to a player after /rl logout", 256)
                 .text("Strings.Messages.Admin.Bypass-Granted", "Told to the admin after a bypass", 256)
                 .text("Strings.Messages.Admin.Bypass-Target", "Told to the bypassed player", 256);
 

@@ -6,10 +6,8 @@ Settings:
   Date-Format: "dd/MM/yyyy HH:mm:ss"
   Max-Session-Time: 120
   # On servers that have dialogs (1.21.6 and up), show the settings and confirmations in dialogs.
+  # The PIN keypad stays an inventory: a dialog's text box would show the PIN as it is typed.
   Use-Dialogs: true
-  # Also show the login and register PIN keypad as a dialog, when Use-Dialogs is on.
-  # It is a keypad of buttons, not a text box, and the PIN shows as stars as it is typed.
-  Dialog-Keypad: false
   BungeeCord:
     Connect-Lobby: false
     Lobby-Server: "lobby"
@@ -41,6 +39,7 @@ Strings:
       Up: "&6&lConnecting...."
       Down: "&eto lobby server."
   Messages:
+    Logged-Out: "&fYou logged out. Enter your PIN to log back in."
     Admin:
       Bypass-Granted: "&fLogin bypass granted for &a%player%&f."
       Bypass-Target: "&aYour login was bypassed by an administrator."

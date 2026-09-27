@@ -19,8 +19,6 @@ import joserodpt.reallogin.RealLogin;
 import joserodpt.reallogin.config.RLConfig;
 import joserodpt.reallogin.player.PlayerDataRow;
 import joserodpt.reallogin.utils.PBKDF2;
-import joserodpt.realutils.dialog.DialogMenu;
-import joserodpt.realutils.dialog.Dialogs;
 import joserodpt.realutils.gui.GUIBuilder;
 import joserodpt.realutils.item.Items;
 import joserodpt.realutils.text.Text;
@@ -59,18 +57,6 @@ public class GUIManager {
     }
 
     public void openRegisterGUI(Player p) {
-        if (!openKeypadDialog(p, true)) {
-            openRegisterInventory(p);
-        }
-    }
-
-    public void openLoginGUI(Player p) {
-        if (!openKeypadDialog(p, false)) {
-            openLoginInventory(p);
-        }
-    }
-
-    private void openRegisterInventory(Player p) {
         GUIBuilder guiBuilder = new GUIBuilder(RLConfig.file().getString("Strings.GUI.Register"), 4 * 9, p.getUniqueId());
 
         guiBuilder.setItem(
@@ -80,20 +66,20 @@ public class GUIManager {
 
         guiBuilder.setCloseAction(event -> {
             if (!this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
-                openRegisterInventory(p);
+                openRegisterGUI(p);
             }
         });
 
         commonLoginRegister(p, guiBuilder);
     }
 
-    private void openLoginInventory(Player p) {
+    public void openLoginGUI(Player p) {
         GUIBuilder guiBuilder = new GUIBuilder(RLConfig.file().getString("Strings.GUI.Login"), 4 * 9, p.getUniqueId());
 
         guiBuilder.setItem(Items.createItem(Material.LAVA_BUCKET, 1, RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Name"), Collections.singletonList(RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Description"))), GUIBuilder.slot(2, 8), event -> removeNumber(p, guiBuilder));
         guiBuilder.setCloseAction(event -> {
             if (!this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
-                openLoginInventory(p);
+                openLoginGUI(p);
             }
         });
 
@@ -102,6 +88,7 @@ public class GUIManager {
 
     private void commonLoginRegister(Player p, GUIBuilder guiBuilder) {
         p.setInvulnerable(true);
+        //this.rl.getPlayerManager().getPlayerPIN().put(p.getUniqueId(), "");
 
         setPinItems(guiBuilder, p);
 
@@ -114,93 +101,6 @@ public class GUIManager {
             }
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
         }, 5L);
-    }
-
-    /**
-     * The keypad as a dialog of buttons, when the config asks for it and the server has dialogs.
-     *
-     * @return false if the inventory keypad should be opened instead
-     */
-    private boolean openKeypadDialog(Player p, boolean register) {
-        if (!RLConfig.file().getBoolean("Settings.Dialog-Keypad", false) || !Dialogs.isSupported()) {
-            return false;
-        }
-        p.setInvulnerable(true);
-
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rl, () -> {
-            //not for a player who left in the meantime, nor one asleep, as the inventory keypad
-            if (p.isOnline() && !p.isSleeping()) {
-                showKeypadDialog(p, register);
-            }
-            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 20);
-        }, 5L);
-        return true;
-    }
-
-    /** Shown again after every key: a dialog closes when one of its buttons is clicked. */
-    private void showKeypadDialog(Player p, boolean register) {
-        if (!p.isOnline() || this.rl.getPlayerManager().isPlayerAuthenticated(p.getUniqueId())) {
-            return;
-        }
-        String pin = this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId());
-        //the PIN as stars, so it is not on screen for anyone looking over the player's shoulder
-        String masked = new String(new char[pin.length()]).replace('\0', '*');
-
-        DialogMenu menu = new DialogMenu(RLConfig.file().getString(register ? "Strings.GUI.Register" : "Strings.GUI.Login"),
-                RLConfig.file().getString("Strings.GUI.PIN") + masked)
-                .columns(3)
-                .buttonWidth(100)
-                //the player has to log in or leave: Escape would leave them frozen with no keypad
-                .closeWithEscape(false)
-                .close(RLConfig.file().getString("Strings.GUI.Items.Leave-Server.Name"));
-
-        for (int i = 1; i <= 9; ++i) {
-            final int digit = i;
-            menu.option("&6&l" + digit, null, () -> pressKey(p, register, digit));
-        }
-        menu.option(RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Name"),
-                RLConfig.file().getString("Strings.GUI.Items.Remove-Number.Description"), () -> pressKey(p, register, -1));
-        menu.option("&6&l0", null, () -> pressKey(p, register, 0));
-        if (register) {
-            menu.option(RLConfig.file().getString("Strings.GUI.Items.Confirm-Pin.Name"), null, () -> {
-                if (!register(p, this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()),
-                        () -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20))) {
-                    showKeypadDialog(p, true);
-                }
-            });
-        }
-
-        //the leave button kicks, as the inventory keypad's door does; a dialog that can't be shown falls back to that keypad
-        menu.open(p, () -> p.kickPlayer(Text.color(Text.getPrefix() + RLConfig.file().getString("Strings.Kick-Message"))),
-                () -> {
-                    if (register) {
-                        openRegisterInventory(p);
-                    } else {
-                        openLoginInventory(p);
-                    }
-                });
-    }
-
-    /** A digit, or -1 to erase the last one. */
-    private void pressKey(Player p, boolean register, int digit) {
-        PlayerManager playerManager = this.rl.getPlayerManager();
-        String pin = playerManager.getPlayerPIN(p.getUniqueId());
-
-        if (digit == -1) {
-            if (!pin.isEmpty()) {
-                pin = pin.substring(0, pin.length() - 1);
-            }
-            p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1, 20);
-        } else if (pin.length() < RLConfig.file().getInt("Settings.Max-Pin-Length")) {
-            pin += digit;
-            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 50);
-        }
-        playerManager.setPlayerPin(p.getUniqueId(), pin);
-
-        if (!register && login(p, () -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20))) {
-            return;
-        }
-        showKeypadDialog(p, register);
     }
 
     public void setPinItems(GUIBuilder gui, Player p) {
@@ -355,82 +255,52 @@ public class GUIManager {
     }
 
     public void checkPIN(Player p, GUIBuilder g) {
-        login(p, () -> {
-            g.setCloseAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
-            p.closeInventory();
-        });
-    }
-
-    /**
-     * Logs the player in if the PIN typed so far is theirs.
-     *
-     * @param closeKeypad takes the keypad, inventory or dialog, off the screen
-     * @return whether they are now logged in
-     */
-    private boolean login(Player p, Runnable closeKeypad) {
         PlayerDataRow pdo = this.rl.getDatabaseManager().getPlayerData(p);
         if (pdo == null) {
-            return false;
+            return;
         }
         String hashedPassword = pdo.getHashedPassword();
         if (hashedPassword == null) {
-            return false;
+            return;
         }
         try {
-            if (!PBKDF2.equalHash(this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), hashedPassword)) {
-                return false;
+            if (PBKDF2.equalHash(this.rl.getPlayerManager().getPlayerPIN(p.getUniqueId()), hashedPassword)) {
+                g.setCloseAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
+                p.closeInventory();
+                p.setInvulnerable(false);
+
+                p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Login.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
+
+                this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
+                this.rl.getDatabaseManager().savePlayerData(pdo, true);
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             rl.getLogger().severe("Error while comparing hashed passwords: " + e.getMessage());
             throw new RuntimeException(e);
         }
-
-        closeKeypad.run();
-        p.setInvulnerable(false);
-
-        p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Login.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Login.Down")), 7, 50, 10);
-
-        this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
-        this.rl.getDatabaseManager().savePlayerData(pdo, true);
-        return true;
     }
 
     public void confirmAction(ClickType e, Player p, String s, GUIBuilder g) {
         if (e == ClickType.RIGHT) {
             removeNumber(p, g);
         } else {
-            register(p, s, () -> {
-                g.setCloseAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
-                p.closeInventory();
-            });
-        }
-    }
+            if (s.length() > 1) {
+                try {
+                    String hashedPassword = PBKDF2.hash(s);
+                    rl.getDatabaseManager().savePlayerData(new PlayerDataRow(p, hashedPassword), true);
 
-    /**
-     * Registers the player with this PIN, if it is long enough.
-     *
-     * @param closeKeypad takes the keypad, inventory or dialog, off the screen
-     * @return whether they are now registered and logged in
-     */
-    private boolean register(Player p, String pin, Runnable closeKeypad) {
-        if (pin.length() <= 1) {
-            return false;
-        }
-        try {
-            String hashedPassword = PBKDF2.hash(pin);
-            rl.getDatabaseManager().savePlayerData(new PlayerDataRow(p, hashedPassword), true);
+                    g.setCloseAction(event -> p.playSound(p.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1, 20));
+                    p.closeInventory();
+                    p.setInvulnerable(false);
 
-            closeKeypad.run();
-            p.setInvulnerable(false);
+                    p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Registered.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
 
-            p.sendTitle(Text.color(RLConfig.file().getString("Strings.Titles.Registered.Up")), Text.color(RLConfig.file().getString("Strings.Titles.Registered.Down")), 7, 50, 10);
-
-            this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
-            return true;
-        } catch (Exception ex) {
-            Bukkit.getLogger().severe("Error while hashing password: " + ex.getMessage());
-            ex.printStackTrace();
-            return false;
+                    this.rl.getPlayerManager().loginGrantedForPlayer(p.getUniqueId());
+                } catch (Exception ex) {
+                    Bukkit.getLogger().severe("Error while hashing password: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
         }
     }
 }

@@ -141,6 +141,25 @@ public class PlayerManager {
         }
     }
 
+    /**
+     * Ends the player's session and asks for their PIN again straight away, as on a join without one.
+     */
+    public void logout(Player p) {
+        this.sessionTime.remove(p.getUniqueId());
+        setupPlayerLogin(p);
+
+        if (rl.getDatabaseManager().isPlayerRegistered(p)) {
+            rl.getGUIManager().openLoginGUI(p);
+        } else {
+            rl.getGUIManager().openRegisterGUI(p);
+        }
+
+        if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
+            addPlayerInventory(p.getUniqueId(), p.getInventory().getContents());
+            p.getInventory().clear();
+        }
+    }
+
     public boolean doesPlayerHaveSession(UUID uniqueId) {
         return this.sessionTime.containsKey(uniqueId);
     }

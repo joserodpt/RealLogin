@@ -36,6 +36,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
@@ -117,13 +118,14 @@ public final class RealLogin extends JavaPlugin {
     public void onDisable() {
         Dialogs.shutdown();
         getLogger().info("Disabling RealLogin...");
-        if (RLConfig.file().getBoolean("Settings.Hide-Inventories")) {
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                if (playerManager.getPlayerInventory(player.getUniqueId()) == null) return;
-
-                player.getInventory().setContents(playerManager.getPlayerInventory(player.getUniqueId()));
-            });
-        }
+        //whatever is still hidden goes back, even if Hide-Inventories was turned off since it was hidden
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            //read once: getPlayerInventory hands the inventory back and forgets it
+            ItemStack[] hidden = playerManager.getPlayerInventory(player.getUniqueId());
+            if (hidden != null) {
+                player.getInventory().setContents(hidden);
+            }
+        });
         playerManager.stopTickTask();
         getLogger().info("RealLogin disabled.");
     }
